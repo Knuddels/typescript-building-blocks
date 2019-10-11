@@ -1,5 +1,8 @@
 import { BugIndicatingError } from './errors';
 
+/**
+ * Represents a locale context, defined by a language and optional country id.
+ */
 export class LocaleId {
 	public static enUS = new LocaleId('en', 'us');
 	public static deDE = new LocaleId('de', 'de');
@@ -18,7 +21,13 @@ export class LocaleId {
 	}
 
 	constructor(
+		/**
+		 * The lowercase language code.
+		 */
 		public readonly language: string,
+		/**
+		 * The lowercase country code.
+		 */
 		public readonly country?: string
 	) {
 		if (language !== language.toLowerCase()) {
@@ -33,7 +42,7 @@ export class LocaleId {
 		}
 	}
 
-	public getLocaleCode(): string {
+	public get localeCode(): string {
 		if (this.country) {
 			return `${this.language}-${this.country.toUpperCase()}`;
 		}
@@ -41,6 +50,6 @@ export class LocaleId {
 	}
 
 	public toString(): string {
-		return this.getLocaleCode();
+		return this.localeCode;
 	}
 }
