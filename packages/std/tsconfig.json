@@ -9,7 +9,7 @@
 		"experimentalDecorators": true,
 		"preserveConstEnums": true,
 		"strictNullChecks": false,
-		"lib": ["es2017"],
+		"lib": ["es2017", "dom"],
 		"skipLibCheck": true,
 		"downlevelIteration": true,
 		"composite": true,
