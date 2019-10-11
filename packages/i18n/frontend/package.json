@@ -1,7 +1,8 @@
 {
-	"name": "@format-editor/frontend",
+	"name": "@knuddels/i18n-frontend",
 	"version": "0.0.1",
 	"license": "MIT",
+	"private": true,
 	"scripts": {
 		"dev": "webpack-dev-server --hot",
 		"build": "node ./scripts/build-entry.js",
