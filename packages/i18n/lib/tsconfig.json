@@ -13,10 +13,10 @@
 		"skipLibCheck": true,
 		"downlevelIteration": true,
 		"composite": true,
-		"rootDir": "./src",
+		"rootDir": "./",
 		"outDir": "./dist",
 		"declarationMap": true
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "test/**/*"],
 	"references": [{ "path": "../../std/tsconfig.json" }]
 }

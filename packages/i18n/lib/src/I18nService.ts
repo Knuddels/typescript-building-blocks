@@ -1,5 +1,6 @@
 import { FormatId } from './FormatId';
 import { LocaleId } from '@knuddels/std';
+import { FormattedData } from './FormattedData';
 
 export interface DateTimeFormatOptions {
 	weekday?: 'narrow' | 'short' | 'long';
@@ -23,11 +24,6 @@ export interface DateTimeFormatOptions {
 }
 
 export type DateSource = number | Date;
-
-export type FormattedData =
-	| { kind: 'text'; value: string }
-	| { kind: 'sequence'; items: FormattedData[] }
-	| { kind: 'object'; data: any; child?: FormattedData };
 
 export interface I18nService {
 	readonly currentLocale: LocaleId;

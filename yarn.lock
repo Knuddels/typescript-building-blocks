@@ -41,6 +41,25 @@
     is-absolute "^1.0.0"
     is-negated-glob "^1.0.0"
 
+"@formatjs/intl-pluralrules@^1.2.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-pluralrules/-/intl-pluralrules-1.3.0.tgz#c8bbc6f4f858bbadb5bfc792fa77a27026d324a4"
+  integrity sha512-m5u9m0wjuR4B52ppb8Pm6zdKBNNVAAMJw9rIS2Ti8PYE+eB+LOUAw97WOn58URSE85FBhbXUYy/rIpWs1Jc38g==
+  dependencies:
+    "@formatjs/intl-utils" "^1.4.0"
+
+"@formatjs/intl-relativetimeformat@^4.1.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-relativetimeformat/-/intl-relativetimeformat-4.2.0.tgz#dc403699eb5755dd19307c93a6541232b14dd721"
+  integrity sha512-0NQnixfRIdwRMagVR0CmqfKaI8xCtT1oZ0tAU7zrsch0k6N2wJFUYBsOtlgSqRR4hz2gAbVc7Rv5tdzkWW5fgg==
+  dependencies:
+    "@formatjs/intl-utils" "^1.4.0"
+
+"@formatjs/intl-utils@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-utils/-/intl-utils-1.4.0.tgz#b59fdf78bbae9f99c500a298bf73b1945f5991f1"
+  integrity sha512-z5HyJumGzORM+5SpvkAlp/hu0AHDeZcUNKSmj9NjS7kWxOGZMuAdS3X1K5XiE0j5I8r8s8SIaz0IQOdMA1WFeA==
+
 "@hediet/live-debug@^0.5.1":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@hediet/live-debug/-/live-debug-0.5.2.tgz#f2ee0034f014836bfd68e26c35a168ab42b15486"
@@ -2334,6 +2353,11 @@ fstream@^1.0.0, fstream@^1.0.12:
     mkdirp ">=0.5 0"
     rimraf "2"
 
+full-icu@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/full-icu/-/full-icu-1.3.0.tgz#1fb4d60050103ad9dcf53735c000e4a03d80c574"
+  integrity sha512-LGLpSsbkHUT0T+EKrIJltYoejYzUqg1eW+n6wm/FTte1pDiYjeKTxO0uJvrE3jgv6V9eBzMAjF6A8jH16C0+eQ==
+
 function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
@@ -2918,6 +2942,11 @@ intl-messageformat@^7.3.2:
   dependencies:
     intl-format-cache "^4.2.2"
     intl-messageformat-parser "^3.2.1"
+
+intl@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/intl/-/intl-1.2.5.tgz#82244a2190c4e419f8371f5aa34daa3420e2abde"
+  integrity sha1-giRKIZDE5Bn4Nx9ao02qNCDiq94=
 
 invert-kv@^1.0.0:
   version "1.0.0"

@@ -1,5 +1,8 @@
 {
-	"mochaExplorer.files": "**\\**\\dist\\test\\*.test.js",
+	"mochaExplorer.files": [
+		"packages\\std\\dist\\test\\*.test.js",
+		"packages\\i18n\\lib\\dist\\test\\*.test.js"
+	],
 	"mochaExplorer.require": "source-map-support/register",
 	"mochaExplorer.logpanel": true
 }

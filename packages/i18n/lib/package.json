@@ -1,13 +1,17 @@
 {
 	"name": "@knuddels/i18n",
 	"version": "0.2.0",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "./dist/src/index.js",
+	"types": "./dist/src/index.d.ts",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Knuddels/typescript-building-blocks.git"
 	},
 	"homepage": "https://github.com/Knuddels/typescript-building-blocks",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc"
+	},
 	"dependencies": {
 		"@knuddels/std": "0.1.0",
 		"intl-messageformat": "^7.3.2"
@@ -15,5 +19,17 @@
 	"peerDependencies": {
 		"mobx": "^5.10.1"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"@types/assert": "^1.4.2",
+		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.7",
+		"@types/sinon": "^7.0.13",
+		"chai": "^4.2.0",
+		"mocha": "^6.1.4",
+		"sinon": "^7.3.2",
+		"source-map-support": "^0.5.13",
+		"@formatjs/intl-pluralrules": "^1.2.0",
+		"@formatjs/intl-relativetimeformat": "^4.1.0",
+		"intl": "^1.2.5"
+	}
 }

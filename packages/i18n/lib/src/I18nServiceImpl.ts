@@ -1,22 +1,21 @@
 import { FormatId } from './FormatId';
 import { observable, action, computed } from 'mobx';
 import {
-	LocalizedMessageFormatProvider,
-	MessageFormatProvider,
-} from './MessageFormatProvider';
+	LocalizedFormatterProvider,
+	FormatterProvider,
+} from './FormatterProvider';
 import { memoizeFormatConstructor } from './memoizeFormatConstructor';
-import { BugIndicatingError } from '@knuddels/std';
-import {
-	I18nService,
-	DateSource,
-	DateTimeFormatOptions,
-	FormattedData,
-} from './I18nService';
-import { LocaleId } from '@knuddels/std';
+import { BugIndicatingError, LocaleId } from '@knuddels/std';
+import { I18nService, DateSource, DateTimeFormatOptions } from './I18nService';
+import { FormattedData } from './FormattedData';
 
 export class I18nServiceImpl implements I18nService {
 	@observable
 	private _currentLocale: LocaleId;
+	/**
+	 * Gets the current locale and triggers a mobx dependency.
+	 * Use `setLocale` to update the current locale.
+	 */
 	public get currentLocale(): LocaleId {
 		return this._currentLocale;
 	}
@@ -31,7 +30,7 @@ export class I18nServiceImpl implements I18nService {
 
 	constructor(
 		initialLocale: LocaleId,
-		private readonly messageFormatProvider: MessageFormatProvider
+		private readonly messageFormatProvider: FormatterProvider
 	) {
 		this._currentLocale = initialLocale;
 	}
@@ -41,38 +40,21 @@ export class I18nServiceImpl implements I18nService {
 		this._currentLocale = locale;
 	}
 
-	@computed get localizedFormatProvider(): LocalizedMessageFormatProvider {
+	@computed get localizedFormatProvider(): LocalizedFormatterProvider {
 		return this.messageFormatProvider.getLocalizedMessageFormatProvider(
 			this._currentLocale
 		);
 	}
 
 	public formatStructured(descriptor: FormatId, data?: {}): FormattedData {
-		const messageFormat = this.localizedFormatProvider.getMessageFormat(
+		const messageFormat = this.localizedFormatProvider.getFormatter(
 			descriptor
 		);
-
-		// This enum a copy of IntlMessageFormat.PART_TYPE, however,
-		// importing PART_TYPE from intl message format throws.
-		const enum PART_TYPE {
-			literal = 0,
-			argument = 1,
-		}
-
-		const parts = messageFormat.formatToParts(data);
-		const items = parts.map<FormattedData>(p =>
-			(p.type as any) === PART_TYPE.literal
-				? { kind: 'text', value: p.value }
-				: { kind: 'object', data: p.value }
-		);
-		return {
-			kind: 'sequence',
-			items,
-		};
+		return messageFormat.formatStructured(data);
 	}
 
 	public format(descriptor: FormatId, data?: {}): string {
-		const messageFormat = this.localizedFormatProvider.getMessageFormat(
+		const messageFormat = this.localizedFormatProvider.getFormatter(
 			descriptor
 		);
 		return messageFormat.format(data);
@@ -83,7 +65,7 @@ export class I18nServiceImpl implements I18nService {
 		options?: DateTimeFormatOptions
 	): string {
 		const f = this.dateTimeCtorCache(
-			this.currentLocale.getLocaleCode(),
+			this.currentLocale.localeCode,
 			options
 		);
 		return f.format(dateTime);
@@ -95,7 +77,7 @@ export class I18nServiceImpl implements I18nService {
 		options?: Intl.RelativeTimeFormatOptions
 	): string {
 		const f = this.relativeTimeCtorCache(
-			this.currentLocale.getLocaleCode(),
+			this.currentLocale.localeCode,
 			options
 		);
 		const formatted = f.format(amount, unit);
