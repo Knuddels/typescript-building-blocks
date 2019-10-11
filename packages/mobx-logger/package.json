@@ -1,0 +1,31 @@
+{
+	"name": "@knuddels/mobx-logger",
+	"version": "1.1.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"author": {
+		"name": "Henning Dieterichs",
+		"email": "h.dieterichs@knuddels.de"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Knuddels/mobx-logger.git"
+	},
+	"homepage": "https://github.com/Knuddels/mobx-logger",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc"
+	},
+	"license": "MIT",
+	"peerDependencies": {
+		"mobx": "^5.11.0"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"files": [
+		"dist",
+		"src"
+	]
+}

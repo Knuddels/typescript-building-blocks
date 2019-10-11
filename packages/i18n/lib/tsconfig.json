@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"sourceMap": true,
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"target": "es6",
+		"jsx": "react",
+		"module": "commonjs",
+		"experimentalDecorators": true,
+		"preserveConstEnums": true,
+		"strictNullChecks": false,
+		"lib": ["es2017"],
+		"skipLibCheck": true,
+		"downlevelIteration": true,
+		"composite": true,
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"declarationMap": true
+	},
+	"include": ["src/**/*"],
+	"references": [{ "path": "../../std/tsconfig.json" }]
+}

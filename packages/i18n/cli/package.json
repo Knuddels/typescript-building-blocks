@@ -1,0 +1,40 @@
+{
+	"name": "@format-editor/cli",
+	"version": "1.0.1",
+	"main": "dist/api.js",
+	"types": "dist/api.d.ts",
+	"bin": {
+		"i18n": "./entry.js"
+	},
+	"license": "MIT",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc",
+		"build-client": "webpack --config ../client/webpack.config.js --output-path client-dist",
+		"start": "node dist/index"
+	},
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"@hediet/node-reload": "^0.7.0",
+		"@hediet/typed-json-rpc": "^0.7.7",
+		"@hediet/typed-json-rpc-websocket": "0.7.7",
+		"@hediet/typed-json-rpc-websocket-server": "0.7.7",
+		"@types/micromatch": "^3.1.0",
+		"@types/to-absolute-glob": "^2.0.0",
+		"bind-decorator": "^1.0.11",
+		"clime": "^0.5.10",
+		"fast-glob": "^3.0.4",
+		"fp-ts": "^1.19.0",
+		"micromatch": "^4.0.2",
+		"reflect-metadata": "^0.1.13",
+		"serve-handler": "^6.0.2",
+		"to-absolute-glob": "^2.0.2",
+		"ts-morph": "^4.0.0",
+		"typescript": "^3.5.2",
+		"vscode-rpc": "^0.13.0",
+		"ws": "^7.0.1",
+		"ts-node": "^8.4.1"
+	}
+}

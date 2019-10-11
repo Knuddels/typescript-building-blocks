@@ -1,0 +1,14 @@
+{
+	"name": "@knuddels/i18n",
+	"version": "1.0.0",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"dependencies": {
+		"@knuddels/std": "1.0.0",
+		"intl-messageformat": "^7.3.2"
+	},
+	"peerDependencies": {
+		"mobx": "^5.10.1"
+	},
+	"devDependencies": {}
+}

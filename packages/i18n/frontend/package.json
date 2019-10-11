@@ -1,0 +1,45 @@
+{
+	"name": "@format-editor/frontend",
+	"version": "0.0.1",
+	"license": "MIT",
+	"scripts": {
+		"dev": "webpack-dev-server --hot",
+		"build": "node ./scripts/build-entry.js",
+		"rebuild": "webpack"
+	},
+	"dependencies": {
+		"@blueprintjs/core": "^3.16.2",
+		"@format-editor/cli": "*",
+		"@hediet/std": "0.6.0",
+		"@hediet/typed-json-rpc": "^0.7.7",
+		"@hediet/typed-json-rpc-websocket": "0.7.7",
+		"@types/react-svg-pan-zoom": "^2.5.7",
+		"classnames": "^2.2.6",
+		"mobx": "^5.10.1",
+		"mobx-react": "^6.1.1",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"react-measure": "2.1.3",
+		"react-svg-pan-zoom": "2.*",
+		"svg-inline-react": "^3.1.0",
+		"viz.js": "^2.1.2",
+		"folder-hash": "^3.2.0"
+	},
+	"devDependencies": {
+		"@types/classnames": "^2.2.8",
+		"@types/react": "^16.8.21",
+		"@types/react-dom": "^16.8.4",
+		"css-loader": "^3.0.0",
+		"file-loader": "^4.0.0",
+		"html-webpack-plugin": "^3.2.0",
+		"node-sass": "^4.12.0",
+		"sass": "^1.20.1",
+		"sass-loader": "^7.1.0",
+		"style-loader": "^0.23.1",
+		"ts-loader": "^6.0.3",
+		"typescript": "^3.5.2",
+		"webpack": "^4.35.0",
+		"webpack-cli": "^3.3.4",
+		"webpack-dev-server": "^3.7.2"
+	}
+}

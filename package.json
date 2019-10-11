@@ -1,0 +1,9 @@
+{
+	"private": true,
+	"workspaces": [
+		"./packages/i18n/lib",
+		"./packages/i18n/cli",
+		"./packages/i18n/frontend",
+		"./packages/std"
+	]
+}

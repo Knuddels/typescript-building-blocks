@@ -1,0 +1,50 @@
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.status {
+	display: flex;
+
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+
+	position: absolute;
+	z-index: 10;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	text-align: center;
+
+	width: 400px;
+	margin-top: 30px;
+	height: 30px;
+	background: lightblue;
+
+	div {
+		flex: 1;
+		margin: 0px;
+		padding: 0px;
+		line-height: 0;
+	}
+}
+
+.component-FormatViewer {
+	.header {
+		margin: 10px 10px 5px 10px;
+		.id {
+			margin-right: 10px;
+			font-weight: 600;
+		}
+		.default {
+			color: gray;
+			font-size: 12px;
+		}
+	}
+	.format {
+		margin-left: 24px;
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"target": "es2019",
+		"module": "commonjs",
+		"strict": true,
+		"outDir": "dist",
+		"skipLibCheck": true,
+		"rootDir": ".",
+		"resolveJsonModule": true,
+		"declaration": true,
+		"declarationMap": true,
+		"newLine": "LF",
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"include": ["**/*"]
+}

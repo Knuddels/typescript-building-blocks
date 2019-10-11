@@ -1,0 +1,13 @@
+{
+	"$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/tsconfig.json",
+	"references": [
+		{ "path": "./packages/std/tsconfig.json" },
+		{ "path": "./packages/i18n/lib/tsconfig.json" },
+		{ "path": "./packages/mobx-logger/tsconfig.json" }
+	],
+	"compilerOptions": {
+		"composite": true,
+		"skipLibCheck": true
+	},
+	"include": []
+}
