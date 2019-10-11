@@ -1,12 +1,32 @@
 {
 	"name": "@knuddels/std",
 	"version": "1.0.0",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "./dist/src/index.js",
+	"types": "./dist/src/index.d.ts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Knuddels/typescript-building-blocks.git"
+	},
+	"homepage": "https://github.com/Knuddels/typescript-building-blocks",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc",
+		"test": "mocha --require source-map-support/register dist/test/**/*.js"
+	},
 	"dependencies": {
-
 	},
 	"devDependencies": {
-
+		"@types/assert": "^1.4.2",
+		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.7",
+		"@types/sinon": "^7.0.13",
+		"chai": "^4.2.0",
+		"mocha": "^6.1.4",
+		"sinon": "^7.3.2",
+		"source-map-support": "^0.5.13"
+	},
+	"mocha": {
+		"spec": "dist/test/**/*.test.js"
 	}
 }

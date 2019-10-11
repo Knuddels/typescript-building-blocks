@@ -29,8 +29,6 @@ ios/Podfile.lock
 ios/Pods/
 ios/ReactMain.xcworkspace/
 
-# VSCode
-.vscode
 
 # Android/IntelliJ
 #

@@ -9,9 +9,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Knuddels/mobx-logger.git"
+		"url": "https://github.com/Knuddels/typescript-building-blocks.git"
 	},
-	"homepage": "https://github.com/Knuddels/mobx-logger",
+	"homepage": "https://github.com/Knuddels/typescript-building-blocks",
 	"scripts": {
 		"dev": "tsc --watch",
 		"build": "tsc"
