@@ -8,7 +8,7 @@ export class LocaleId {
 	public static deDE = new LocaleId('de', 'de');
 
 	public static fromLocaleCode(code: string): LocaleId | undefined {
-		const match = code.match(/([a-zA-Z]+)([-_]([a-zA-Z]+))?/);
+		const match = code.match(/^([a-zA-Z]+)([-_]([a-zA-Z]+))?$/);
 		if (!match) {
 			return undefined;
 		}
