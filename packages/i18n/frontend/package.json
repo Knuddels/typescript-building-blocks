@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"@blueprintjs/core": "^3.16.2",
-		"@format-editor/cli": "*",
+		"@knuddels/i18n-cli": "*",
 		"@hediet/std": "0.6.0",
 		"@hediet/typed-json-rpc": "^0.7.7",
 		"@hediet/typed-json-rpc-websocket": "0.7.7",
