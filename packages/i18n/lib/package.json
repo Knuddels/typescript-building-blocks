@@ -1,6 +1,6 @@
 {
 	"name": "@knuddels/i18n",
-	"version": "1.0.0",
+	"version": "0.2.0",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"repository": {
@@ -9,7 +9,7 @@
 	},
 	"homepage": "https://github.com/Knuddels/typescript-building-blocks",
 	"dependencies": {
-		"@knuddels/std": "1.0.0",
+		"@knuddels/std": "0.1.0",
 		"intl-messageformat": "^7.3.2"
 	},
 	"peerDependencies": {
