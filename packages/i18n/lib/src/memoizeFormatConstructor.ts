@@ -28,7 +28,7 @@ export function memoizeFormatConstructor<T extends new (...args: any[]) => any>(
 ): (...args: ConstructorParameters<T>) => CtorReturnType<T> {
 	return (...args: ConstructorParameters<T>) => {
 		const cacheId = getCacheId(args);
-		let format = cacheId && cache[cacheId];
+		let format = cache[cacheId];
 		if (!format) {
 			format = new formatConstructor(...args);
 			if (cacheId) {

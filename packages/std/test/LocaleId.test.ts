@@ -15,9 +15,9 @@ describe('LocaleId', () => {
 	});
 
 	it('locale code', () => {
-		expect(LocaleId.fromLocaleCode('en').localeCode).to.equal('en');
-		expect(LocaleId.fromLocaleCode('en-us').localeCode).to.equal('en-US');
-		expect(LocaleId.fromLocaleCode('eN-uS').localeCode).to.equal('en-US');
+		expect(LocaleId.fromLocaleCode('en')!.localeCode).to.equal('en');
+		expect(LocaleId.fromLocaleCode('en-us')!.localeCode).to.equal('en-US');
+		expect(LocaleId.fromLocaleCode('eN-uS')!.localeCode).to.equal('en-US');
 		expect(LocaleId.fromLocaleCode('eN-uS-')).to.be.undefined;
 	});
 

@@ -8,7 +8,7 @@
 		"module": "commonjs",
 		"experimentalDecorators": true,
 		"preserveConstEnums": true,
-		"strictNullChecks": false,
+		"strict": true,
 		"lib": ["es2017"],
 		"skipLibCheck": true,
 		"downlevelIteration": true,

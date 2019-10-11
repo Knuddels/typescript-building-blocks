@@ -3,12 +3,14 @@ import { BugIndicatingError } from './errors';
 export function foreachProp<T extends Record<string, any>>(
 	items: T,
 	methods: {
-		[TKey in keyof T]: (((item: T[TKey]) => void) & { tag: T[TKey] }) | null
+		[TKey in keyof T]:
+			| (((item: T[TKey]) => void) & { tag: T[TKey] })
+			| null;
 	}
 ): void {
 	for (const [key, item] of Object.entries(items)) {
 		const method = methods[key];
-		method(item);
+		method!(item);
 	}
 }
 

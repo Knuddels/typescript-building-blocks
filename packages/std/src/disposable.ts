@@ -95,7 +95,7 @@ export namespace Disposable {
 			return false;
 		}
 
-		if (!('dispose' in obj)) {
+		if (obj && !('dispose' in obj)) {
 			return false;
 		}
 

@@ -46,7 +46,7 @@ export class LazyMap<TKey, TValue> implements IReadonlyMap<TKey, TValue> {
 			this.map.set(key, value);
 			return value;
 		}
-		return this.map.get(key);
+		return this.map.get(key)!;
 	}
 
 	public delete(key: TKey): void {

@@ -50,7 +50,13 @@ class LocalizedMessageFormatProviderImpl implements LocalizedFormatterProvider {
 		for (const p of this.providers) {
 			const bundle = p(this.localeId);
 			for (const [key, value] of Object.entries(bundle.formats)) {
-				result[key] = new MessageFormatFormatter(value, this.localeId);
+				if (!value) {
+					console.warn(`Key '${key}' has no translation!`);
+				}
+				result[key] = new MessageFormatFormatter(
+					value || key,
+					this.localeId
+				);
 			}
 		}
 		return result;
