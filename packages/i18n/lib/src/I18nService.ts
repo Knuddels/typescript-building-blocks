@@ -29,16 +29,16 @@ export interface I18nService {
 	readonly currentLocale: LocaleId;
 	setLocale(locale: LocaleId): void;
 
-	formatStructured(descriptor: FormatId, data?: {}): FormattedData;
+	formatStructured(formatId: FormatId, data?: {}): FormattedData;
 
-	format(descriptor: FormatId, data?: {}): string;
+	format(formatId: FormatId, data?: {}): string;
 
 	formatDateTime(
 		dateTime: DateSource,
 		options?: DateTimeFormatOptions
 	): string;
 
-	formatRelativeAmount(
+	formatDateTimeAmount(
 		amount: number,
 		unit: Intl.RelativeTimeFormatUnit,
 		options?: Intl.RelativeTimeFormatOptions

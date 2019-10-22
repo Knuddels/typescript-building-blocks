@@ -41,21 +41,21 @@ export class I18nServiceImpl implements I18nService {
 	}
 
 	@computed get localizedFormatProvider(): LocalizedFormatterProvider {
-		return this.messageFormatProvider.getLocalizedMessageFormatProvider(
+		return this.messageFormatProvider.getLocalizedFormatterProvider(
 			this._currentLocale
 		);
 	}
 
-	public formatStructured(descriptor: FormatId, data?: {}): FormattedData {
+	public formatStructured(formatId: FormatId, data?: {}): FormattedData {
 		const messageFormat = this.localizedFormatProvider.getFormatter(
-			descriptor
+			formatId
 		);
 		return messageFormat.formatStructured(data);
 	}
 
-	public format(descriptor: FormatId, data?: {}): string {
+	public format(formatId: FormatId, data?: {}): string {
 		const messageFormat = this.localizedFormatProvider.getFormatter(
-			descriptor
+			formatId
 		);
 		return messageFormat.format(data);
 	}
@@ -71,7 +71,7 @@ export class I18nServiceImpl implements I18nService {
 		return f.format(dateTime);
 	}
 
-	public formatRelativeAmount(
+	public formatDateTimeAmount(
 		amount: number,
 		unit: Intl.RelativeTimeFormatUnit,
 		options?: Intl.RelativeTimeFormatOptions
@@ -105,7 +105,7 @@ export class I18nServiceImpl implements I18nService {
 			// This fixes that.
 			displayUnit = 'second';
 		}
-		return this.formatRelativeAmount(diff, displayUnit, options);
+		return this.formatDateTimeAmount(diff, displayUnit, options);
 	}
 }
 

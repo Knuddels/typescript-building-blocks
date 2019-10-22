@@ -15,7 +15,7 @@ import { FormattedData } from '.';
 export class MessageFormatFormatterProvider implements FormatterProvider {
 	private readonly providers = new ObservableSet<FormatBundleProvider>();
 
-	public getLocalizedMessageFormatProvider(
+	public getLocalizedFormatterProvider(
 		localeId: LocaleId
 	): LocalizedFormatterProvider {
 		return new LocalizedMessageFormatProviderImpl(localeId, this.providers);
@@ -62,18 +62,20 @@ class LocalizedMessageFormatProviderImpl implements LocalizedFormatterProvider {
 		return result;
 	}
 
-	getFormatter(descriptor: FormatId): Formatter {
-		let f = this.formats[descriptor.id];
-		if (!f) {
-			if (!descriptor.defaultFormat) {
-				return new MessageFormatFormatter(descriptor.id, this.localeId);
-			}
-			f = new MessageFormatFormatter(
-				descriptor.defaultFormat,
+	getFormatter(formatId: FormatId): Formatter {
+		const f = this.formats[formatId.id];
+		if (f) {
+			return f;
+		}
+		if (formatId.defaultFormat) {
+			const defaultFormat = new MessageFormatFormatter(
+				formatId.defaultFormat,
 				this.localeId
 			);
+			this.formats[formatId.id] = defaultFormat;
+			return defaultFormat;
 		}
-		return f;
+		return new MessageFormatFormatter(formatId.id, this.localeId);
 	}
 }
 

@@ -3,14 +3,14 @@ import { LocaleId } from '@knuddels/std';
 import { FormattedData } from './FormattedData';
 
 export interface FormatterProvider {
-	getLocalizedMessageFormatProvider(
+	getLocalizedFormatterProvider(
 		localeId: LocaleId
 	): LocalizedFormatterProvider;
 }
 
 export interface LocalizedFormatterProvider {
 	readonly localeId: LocaleId;
-	getFormatter(descriptor: FormatId): Formatter;
+	getFormatter(formatId: FormatId): Formatter;
 }
 
 export interface Formatter {
