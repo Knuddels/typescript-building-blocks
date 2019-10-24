@@ -118,7 +118,7 @@ export class LocalizedFormatPackage {
 	constructor(
 		public readonly filePath: string,
 		public readonly scope: Scope,
-		private readonly watch: boolean
+		watch: boolean
 	) {
 		if (watch) {
 			const watcher = chokidar.watch(filePath);
@@ -128,6 +128,9 @@ export class LocalizedFormatPackage {
 			});
 		}
 		this.refreshDoc();
+		autorun(() => {
+			this.doc;
+		});
 	}
 
 	@action

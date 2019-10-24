@@ -8,13 +8,16 @@ import { FormatDeclarationProvider, DiagnosticProvider } from '.';
 import { createProgram } from '../typescript/createProgram';
 
 export class API {
-	public readonly projectRootPath: string;
-	private readonly watch: boolean;
-
-	constructor(options: { projectRootPath: string; watch?: boolean }) {
-		this.projectRootPath = options.projectRootPath;
-		this.watch = !!options.watch;
+	public get projectRootPath(): string {
+		return this.options.projectRootPath;
 	}
+	private get watch(): boolean {
+		return !!this.options.watch;
+	}
+
+	constructor(
+		private readonly options: { projectRootPath: string; watch?: boolean }
+	) {}
 
 	public readonly scopes = new Scopes({
 		dir: this.projectRootPath,

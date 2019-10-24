@@ -1,6 +1,7 @@
 import { Command, command, param } from 'clime';
 import { Diagnostic, API } from '../model';
 import { groupBy } from '../utils/other';
+import { LocalizedFormatPackage } from '../model/Scopes';
 
 @command({ description: 'Checks all formats' })
 export default class extends Command {
@@ -9,19 +10,31 @@ export default class extends Command {
 		projectRootPath: string
 	) {
 		const api = new API({ projectRootPath });
+
 		const diags = api.diagnosticProvider.diagnostics;
-		const diagsByScope = groupBy(diags, d =>
-			'package' in d ? d.package.scope : null
-		);
+
+		function getPackage(d: Diagnostic): LocalizedFormatPackage | null {
+			return 'package' in d
+				? d.package
+				: 'format' in d
+				? d.format.package
+				: null;
+		}
+
+		const diagsByScope = groupBy(diags, d => {
+			const p = getPackage(d);
+			if (!p) {
+				return null;
+			}
+			return p.scope;
+		});
 		for (const [scope, diags] of diagsByScope) {
 			if (!scope) {
 				console.log(`Unscoped: `);
 				console.log(diags);
 			} else {
 				console.log(`Scope "${scope.name}": `);
-				const diagsByPkg = groupBy(diags, d =>
-					'package' in d ? d.package : null
-				);
+				const diagsByPkg = groupBy(diags, d => getPackage(d));
 				for (const [pkg, diags] of diagsByPkg) {
 					if (!pkg) {
 						console.log(diags);

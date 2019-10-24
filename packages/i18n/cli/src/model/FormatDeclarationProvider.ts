@@ -35,7 +35,7 @@ export class FormatDeclarationProvider {
 	private readonly cache = new SimpleCache<
 		ts.SourceFile,
 		FormatDeclaration[]
-	>(sf => (sf as any).version);
+	>(sf => (sf as any).version || sf.fileName);
 
 	@computed
 	public get formatDeclarations(): FormatDeclaration[] {

@@ -1,4 +1,5 @@
 import ts = require('typescript');
+import { resolve } from 'path';
 
 export function findTsConfigFile(tsConfigSearchPath: string): string {
 	const configPath = ts.findConfigFile(
@@ -9,5 +10,6 @@ export function findTsConfigFile(tsConfigSearchPath: string): string {
 	if (!configPath) {
 		throw new Error("Could not find a valid 'tsconfig.json'.");
 	}
-	return configPath;
+	const path = resolve(configPath);
+	return path;
 }

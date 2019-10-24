@@ -4,7 +4,6 @@ import WebSocket = require('ws');
 import { WebSocketStream } from '@hediet/typed-json-rpc-websocket';
 import handler = require('serve-handler');
 import http = require('http');
-import { join } from 'path';
 import { DiagnosticData } from './shared';
 
 interface ClientInfo {
