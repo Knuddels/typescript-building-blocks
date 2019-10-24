@@ -1,6 +1,11 @@
 {
-	"private": true,
-	"workspaces": [
+    "name": "root",
+    "private": true,
+    "devDependencies": {
+        "source-map-support": "^0.5.13",
+        "mobx": "^5.13.0"
+    },
+    "workspaces": [
 		"./packages/i18n/lib",
 		"./packages/i18n/cli",
 		"./packages/i18n/frontend",

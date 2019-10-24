@@ -1,10 +1,11 @@
-import { serverContract, port, scopeType } from './shared';
+import { serverContract, port, scopeType, ActionId } from './shared';
 import { asCodePosition, CodePositionRevealer } from './utils/codePosition';
 import WebSocket = require('ws');
 import { WebSocketStream } from '@hediet/typed-json-rpc-websocket';
 import handler = require('serve-handler');
 import http = require('http');
 import { join } from 'path';
+import { DiagnosticData } from './shared';
 
 interface ClientInfo {
 	client: typeof serverContract.TClientInterface;
@@ -17,12 +18,15 @@ export interface ServerBackend {
 		formatId: string,
 		format: string
 	): Promise<void>;
+
+	applyActions(actions: ActionId[]): Promise<void>;
 }
 
 export class Server {
 	private clients = new Set<ClientInfo>();
 
 	private lastScopes: (typeof scopeType['_A'])[] | undefined = undefined;
+	private lastDiagnostics: (DiagnosticData)[] | undefined = undefined;
 
 	constructor(
 		private readonly codePositionRevealer: CodePositionRevealer,
@@ -66,6 +70,9 @@ export class Server {
 							format!
 						);
 					},
+					applyActions: async ({ actions }) => {
+						await backend.applyActions(actions);
+					},
 				}
 			);
 			const clientInfo: ClientInfo = {
@@ -74,6 +81,12 @@ export class Server {
 
 			if (this.lastScopes) {
 				client.dataUpdated({ scopes: this.lastScopes });
+			}
+
+			if (this.lastDiagnostics) {
+				client.diagnosticsUpdated({
+					diagnostics: this.lastDiagnostics,
+				});
 			}
 
 			this.clients.add(clientInfo);
@@ -90,6 +103,14 @@ export class Server {
 
 		for (const client of this.clients) {
 			client.client.dataUpdated({ scopes });
+		}
+	}
+
+	public publishDiagnostics(diagnostics: DiagnosticData[]) {
+		this.lastDiagnostics = diagnostics;
+
+		for (const client of this.clients) {
+			client.client.diagnosticsUpdated({ diagnostics });
 		}
 	}
 }

@@ -35,7 +35,8 @@
 		"typescript": "^3.5.2",
 		"vscode-rpc": "^0.13.0",
 		"ws": "^7.0.1",
-		"ts-node": "^8.4.1"
+		"ts-node": "^8.4.1",
+		"chokidar": "^3.2.2"
 	},
 	"devDependencies": {
 		"@knuddels/i18n-frontend": "0.0.1"

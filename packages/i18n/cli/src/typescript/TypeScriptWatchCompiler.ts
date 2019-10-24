@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import { observable } from 'mobx';
 
 const formatHost: ts.FormatDiagnosticsHost = {
 	getCanonicalFileName: path => path,
@@ -7,20 +8,11 @@ const formatHost: ts.FormatDiagnosticsHost = {
 };
 
 export class TypeScriptWatchCompiler {
-	constructor(tsConfigSearchPath: string) {
-		const configPath = ts.findConfigFile(
-			tsConfigSearchPath,
-			ts.sys.fileExists,
-			'tsconfig.json'
-		);
-		if (!configPath) {
-			throw new Error("Could not find a valid 'tsconfig.json'.");
-		}
-
+	constructor(tsConfigPath: string) {
 		const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
 		const host = ts.createWatchCompilerHost(
-			configPath,
+			tsConfigPath,
 			{ noEmit: true },
 			ts.sys,
 			createProgram,
@@ -44,12 +36,21 @@ export class TypeScriptWatchCompiler {
 			origPostProgramCreate!(program);
 		};
 
-		ts.createWatchProgram(host);
+		const w = ts.createWatchProgram(host);
+		this._program = w.getProgram().getProgram();
+	}
+
+	@observable
+	private _program: ts.Program;
+	public get program(): ts.Program {
+		return this._program;
 	}
 
 	private handleAfterProgramCreate(
 		program: ts.SemanticDiagnosticsBuilderProgram
-	) {}
+	) {
+		this._program = program.getProgram();
+	}
 
 	private reportDiagnostic(diagnostic: ts.Diagnostic) {
 		console.error(

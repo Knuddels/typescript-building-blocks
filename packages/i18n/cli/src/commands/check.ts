@@ -1,5 +1,5 @@
 import { Command, command, param } from 'clime';
-import { API, Diagnostic } from '../model/API';
+import { Diagnostic, API } from '../model';
 import { groupBy } from '../utils/other';
 
 @command({ description: 'Checks all formats' })
@@ -8,7 +8,8 @@ export default class extends Command {
 		@param({ description: 'Project root path', required: true })
 		projectRootPath: string
 	) {
-		const diags = new API().getDiagnostics(projectRootPath);
+		const api = new API({ projectRootPath });
+		const diags = api.diagnosticProvider.diagnostics;
 		const diagsByScope = groupBy(diags, d =>
 			'package' in d ? d.package.scope : null
 		);
@@ -42,23 +43,13 @@ export default class extends Command {
 function diagToString(diag: Diagnostic): string {
 	switch (diag.kind) {
 		case 'diffingDefaultFormats':
-			return `Default format of id "${
-				diag.format.id
-			}" differs from format in default language "${
-				diag.package.lang
-			}".\nDefault format: "${
-				diag.declaration.defaultFormat
-			}" (declared in "${
-				diag.declaration.fileName
-			}").\nFormat in default language: ${diag.format.format}.`;
+			return `Default format of id "${diag.format.id}" differs from format in default language "${diag.format.package.lang}".\nDefault format: "${diag.declaration.defaultFormat}" (declared in "${diag.declaration.fileName}").\nFormat in default language: ${diag.format.format}.`;
 		case 'emptyFormat':
 			return `Format for id "${diag.format.id}" is empty.`;
 		case 'unknownFormat':
 			return `Format id "${diag.format.id}" is not declared in code.`;
 		case 'missingFormat':
-			return `A format for "${
-				diag.declaration.id
-			}" is missing, but declared in "${diag.declaration.fileName}".`;
+			return `A format for "${diag.declaration.id}" is missing, but declared in "${diag.declaration.fileName}".`;
 	}
 
 	return diag.kind;

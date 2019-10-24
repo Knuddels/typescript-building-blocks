@@ -1,7 +1,14 @@
 @import '~@blueprintjs/core/lib/css/blueprint.css';
 
+html,
+body,
+.target {
+	height: 100%;
+}
+
 body {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	margin: 0;
 }
 
 .status {
@@ -12,7 +19,7 @@ body {
 	justify-content: center;
 
 	position: absolute;
-	z-index: 10;
+	z-index: 100;
 	margin-left: auto;
 	margin-right: auto;
 	left: 0;
@@ -29,6 +36,46 @@ body {
 		margin: 0px;
 		padding: 0px;
 		line-height: 0;
+	}
+}
+
+.component-GUI {
+	height: 100%;
+}
+
+.component-Diagnostic {
+	.title {
+		font-weight: 500;
+		margin-right: 20px;
+	}
+}
+
+.component-marked {
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: 1px;
+	border-radius: 4px;
+	border: 1px solid silver;
+	background: transparentize(silver, 0.7);
+}
+
+.component-ConnectedGui {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	.part-Panel {
+		height: 100%;
+	}
+}
+
+.component-ScopesViewer {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	.part-Scopes {
+		height: 100%;
+		padding: 10px;
+		overflow: auto;
 	}
 }
 

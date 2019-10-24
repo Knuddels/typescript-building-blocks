@@ -7,10 +7,10 @@ export default class extends Command {
 		@param({ description: 'Project root path', required: true })
 		projectRootPath: string
 	) {
-		const scopes = new Scopes(projectRootPath);
+		const scopes = new Scopes({ dir: projectRootPath });
 		for (const s of scopes.getScopes()) {
-			for (const p of s.getLocalizedFormatPackages()) {
-				const f = p.getFormats();
+			for (const p of s.localizedFormatPackages) {
+				const f = p.formats;
 				p.setFormats(f);
 			}
 		}

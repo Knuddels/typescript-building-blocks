@@ -1,5 +1,8 @@
 import { hotClass, registerUpdateReconciler } from '@hediet/node-reload';
 import * as ts from 'typescript';
+import { Provider } from './Provider';
+import { SimpleCache } from '../utils/SimpleCache';
+import { computed } from 'mobx';
 
 export class FormatDeclaration {
 	private _fileName: string | undefined = undefined;
@@ -24,6 +27,28 @@ export function getAllDeclaredFormats(p: ts.Program): FormatDeclaration[] {
 
 export function getDeclaredFormats(sf: ts.SourceFile): FormatDeclaration[] {
 	return new Main().getDeclaredFormats(sf);
+}
+
+export class FormatDeclarationProvider {
+	constructor(private readonly programProvider: Provider<ts.Program>) {}
+
+	private readonly cache = new SimpleCache<
+		ts.SourceFile,
+		FormatDeclaration[]
+	>(sf => (sf as any).version);
+
+	@computed
+	public get formatDeclarations(): FormatDeclaration[] {
+		const prog = this.programProvider.get();
+		const m = new Main();
+		const result = new Array<FormatDeclaration>();
+		for (const sf of prog.getSourceFiles()) {
+			result.push(
+				...this.cache.getEntry(sf, sf => m.getDeclaredFormats(sf))
+			);
+		}
+		return result;
+	}
 }
 
 registerUpdateReconciler(module);

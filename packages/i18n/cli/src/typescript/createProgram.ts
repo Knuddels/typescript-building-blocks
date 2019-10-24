@@ -1,23 +1,13 @@
 import * as ts from 'typescript';
 import { dirname, resolve } from 'path';
 
-export function createProgram(tsConfigSearchPath: string): ts.Program {
-	const configPath = ts.findConfigFile(
-		tsConfigSearchPath,
-		ts.sys.fileExists,
-		'tsconfig.json'
-	);
-
+export function createProgram(configPath: string): ts.Program {
 	const parseConfigHost: ts.ParseConfigHost = {
 		fileExists: ts.sys.fileExists,
 		readFile: ts.sys.readFile,
 		readDirectory: ts.sys.readDirectory,
 		useCaseSensitiveFileNames: true,
 	};
-
-	if (!configPath) {
-		throw new Error();
-	}
 
 	const configFile = ts.readConfigFile(configPath, ts.sys.readFile);
 

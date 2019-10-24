@@ -1,14 +1,36 @@
 import * as React from 'react';
-import { Model } from './Model';
+import { Model, DiagnosticInfo } from './Model';
 import classnames = require('classnames');
 import { observer, disposeOnUnmount } from 'mobx-react';
+import { Select, MultiSelect, ItemRenderer } from '@blueprintjs/select';
 import {
 	scopeType,
 	localizedFormatPackageType,
-	formatType,
-} from '@format-editor/cli';
-import { InputGroup, Spinner, Icon } from '@blueprintjs/core';
-import { observable } from 'mobx';
+	FormatDeclarationData,
+	DiagnosticData,
+} from '@knuddels/i18n-cli';
+import {
+	InputGroup,
+	Spinner,
+	Icon,
+	Navbar,
+	Alignment,
+	Button,
+	Callout,
+	Tabs,
+	Tab,
+	MenuItem,
+	FormGroup,
+	Tag,
+	Card,
+	Checkbox,
+	ButtonGroup,
+	AnchorButton,
+	Menu,
+	Popover,
+} from '@blueprintjs/core';
+import { observable, ObservableSet, runInAction } from 'mobx';
+import { CustomMultiSelect } from './CustomMultiSelect';
 
 @observer
 export class GUI extends React.Component<{ model: Model }, {}> {
@@ -17,7 +39,7 @@ export class GUI extends React.Component<{ model: Model }, {}> {
 
 		const conState = model.connectionState;
 		return (
-			<div className={'gui'}>
+			<div className="component-GUI">
 				{conState.kind !== 'connected' && (
 					<div className="status">
 						<div>
@@ -30,29 +52,119 @@ export class GUI extends React.Component<{ model: Model }, {}> {
 				{!model.data ? (
 					<div>Waiting for data</div>
 				) : (
-					<ScopesViewer
-						model={this.props.model}
-						scopes={model.data}
-					/>
+					<ConnectedGui model={model} data={model.data} />
 				)}
 			</div>
 		);
 	}
 }
 
-export class ScopesViewer extends React.Component<{
-	scopes: (typeof scopeType['_A'])[];
+function flatMap<T, TResult>(
+	arr: T[],
+	selector: (item: T) => TResult[]
+): TResult[] {
+	return new Array<TResult>().concat(...arr.map(item => selector(item)));
+}
+
+@observer
+export class ConnectedGui extends React.Component<{
+	data: (typeof scopeType['_A'])[];
 	model: Model;
 }> {
 	render() {
-		const s = this.props.scopes;
+		const model = this.props.model;
+		const data = this.props.data;
 		return (
-			<div className="component-ScopesViewer">
-				{s.map(scope => (
-					<ScopeViewer
-						key={scope.name}
-						model={this.props.model}
-						scope={scope}
+			<div className="component-ConnectedGui">
+				<Navbar>
+					<Navbar.Group align={Alignment.LEFT}>
+						<Navbar.Heading>I18n Format Editor</Navbar.Heading>
+						<Navbar.Divider />
+						<Tabs
+							id="TabsExample"
+							selectedTabId={model.activePanel}
+							onChange={e =>
+								runInAction(
+									'Update tab',
+									() => (model.activePanel = e as any)
+								)
+							}
+						>
+							<Tab id="Formats" title="Formats" />
+							<Tab id="CodeIssues">
+								Code Issues{' '}
+								{model.diagnostics.length > 0 && (
+									<Tag intent="danger" round={true}>
+										{model.diagnostics.length}
+									</Tag>
+								)}
+							</Tab>
+						</Tabs>
+					</Navbar.Group>
+				</Navbar>
+				<div className="part-Panel">
+					{model.activePanel === 'Formats' && (
+						<ScopesViewer model={this.props.model} scopes={data} />
+					)}
+					{model.activePanel === 'CodeIssues' && (
+						<CodeIssuesComponent model={model} />
+					)}
+				</div>
+			</div>
+		);
+	}
+}
+
+@observer
+export class CodeIssuesComponent extends React.Component<{
+	model: Model;
+}> {
+	render() {
+		const { model } = this.props;
+		return (
+			<div>
+				<div style={{ marginTop: '0px' }}>
+					<Callout title="Options">
+						<div style={{ display: 'flex' }}>
+							<Button
+								intent="primary"
+								onClick={() => model.fixSelected()}
+							>
+								Fix selected
+							</Button>
+							<div style={{ width: 4 }} />
+							<Button
+								onClick={() =>
+									runInAction('Select all', () => {
+										for (const d of model.diagnosticInfos) {
+											d.selected = true;
+										}
+									})
+								}
+							>
+								Select All
+							</Button>
+							<div style={{ width: 4 }} />
+							<Button
+								onClick={() =>
+									runInAction('Deselect all', () => {
+										for (const d of model.diagnosticInfos) {
+											d.selected = false;
+										}
+									})
+								}
+							>
+								Deselect All
+							</Button>
+						</div>
+					</Callout>
+				</div>
+
+				{model.diagnosticInfos.map((d, idx) => (
+					<DiagnosticComponent
+						key={idx}
+						diagnostic={d}
+						model={model}
 					/>
 				))}
 			</div>
@@ -60,6 +172,241 @@ export class ScopesViewer extends React.Component<{
 	}
 }
 
+@observer
+export class DiagnosticComponent extends React.Component<{
+	model: Model;
+	diagnostic: DiagnosticInfo;
+}> {
+	render() {
+		const diag = this.props.diagnostic;
+		const model = this.props.model;
+		return (
+			<div className="component-Diagnostic" style={{ margin: 10 }}>
+				<Callout
+					intent="danger"
+					icon={undefined}
+					style={{
+						display: 'flex',
+						alignItems: 'baseline',
+						flexWrap: 'wrap',
+					}}
+				>
+					{this.renderDiagnostic2(diag.diagnostic)}
+
+					{diag.defaultAction && (
+						<ButtonGroup style={{ marginLeft: 'auto' }}>
+							<Button
+								icon="take-action"
+								active={diag.selected}
+								onClick={() =>
+									runInAction(
+										'Toggle action selection',
+										() => {
+											diag.selected = !diag.selected;
+										}
+									)
+								}
+							/>
+							<Button
+								onClick={() =>
+									this.props.model.applyActions([
+										diag.defaultAction!,
+									])
+								}
+							>
+								{diag.defaultAction.title}
+							</Button>
+							{diag.diagnostic.fixes.length > 1 && (
+								<Popover
+									position="bottom-left"
+									content={
+										<Menu>
+											{diag.diagnostic.fixes.map(
+												(action, idx) => (
+													<MenuItem
+														key={action.id}
+														text={action.title}
+														onClick={() =>
+															runInAction(
+																'Set idx',
+																() =>
+																	(diag.defaultActionIdx = idx)
+															)
+														}
+													/>
+												)
+											)}
+										</Menu>
+									}
+								>
+									<Button icon={'caret-down'} />
+								</Popover>
+							)}
+						</ButtonGroup>
+					)}
+				</Callout>
+			</div>
+		);
+	}
+
+	renderDiagnostic2(diag: DiagnosticData) {
+		switch (diag.kind) {
+			case 'missingFormat':
+				return (
+					<>
+						<span className="title">Missing Format</span>
+						<span>
+							Format
+							<span className="component-marked">
+								{diag.declaration.formatId}
+							</span>
+							is missing in scope
+							<span className="component-marked">
+								{diag.package.scopeName}
+							</span>
+							for language
+							<span className="component-marked">
+								{diag.package.lang}
+							</span>
+						</span>
+					</>
+				);
+			case 'emptyFormat':
+				return (
+					<span>
+						<span className="title">Empty Format</span>
+						Format
+						<span className="component-marked">
+							{diag.format.formatId}
+						</span>
+						in scope
+						<span className="component-marked">
+							{diag.format.scopeName}
+						</span>
+						for language
+						<span className="component-marked">
+							{diag.format.lang}
+						</span>
+						is empty.
+					</span>
+				);
+			case 'unknownFormat':
+				return (
+					<span>
+						<span className="title">Unknown Format</span>
+						Format
+						<span className="component-marked">
+							{diag.format.formatId}
+						</span>
+						in scope
+						<span className="component-marked">
+							{diag.format.scopeName}
+						</span>
+						for language
+						<span className="component-marked">
+							{diag.format.lang}
+						</span>
+						is not used in code.
+					</span>
+				);
+			case 'formatDeclarationWithoutScope':
+				return <div>formatDeclarationWithoutScope</div>;
+			case 'duplicateFormatDeclaration':
+				return <div>duplicateFormatDeclaration</div>;
+			case 'diffingDefaultFormats':
+				return (
+					<>
+						<span className="title">
+							Conflicting Default Formats
+						</span>
+						<span>
+							Format
+							<span className="component-marked">
+								{diag.format.formatId}
+							</span>
+							in scope
+							<span className="component-marked">
+								{diag.format.scopeName}
+							</span>
+							has default format
+							<span className="component-marked">
+								{diag.declaration.defaultFormat}
+							</span>{' '}
+							but format
+							<span className="component-marked">
+								{diag.format.format}
+							</span>
+							in default language.
+						</span>
+					</>
+				);
+			case 'missingDefaultFormat':
+				return (
+					<span>
+						<span className="title">Missing Default Format</span>
+					</span>
+				);
+		}
+	}
+}
+
+@observer
+export class ScopesViewer extends React.Component<{
+	scopes: (typeof scopeType['_A'])[];
+	model: Model;
+}> {
+	render() {
+		const s = this.props.scopes;
+		const model = this.props.model;
+		return (
+			<div className="component-ScopesViewer">
+				<div style={{ marginTop: '0px' }}>
+					<Callout title="Options">
+						<div style={{ display: 'flex' }}>
+							<FormGroup
+								label="Scopes"
+								style={{ marginRight: '10px' }}
+							>
+								<CustomMultiSelect<typeof scopeType['_A']>
+									items={s}
+									selectedItems={model.filteredScopes}
+									nameFn={e => e.name}
+								/>
+							</FormGroup>
+							<FormGroup label="Languages">
+								<CustomMultiSelect<string>
+									items={[
+										...new Set(
+											flatMap(s, d =>
+												d.packages.map(p => p.lang)
+											)
+										),
+									]}
+									selectedItems={model.filteredLanguages}
+									nameFn={e => e}
+								/>
+							</FormGroup>
+						</div>
+					</Callout>
+				</div>
+				<div className="part-Scopes">
+					{s.map(
+						scope =>
+							this.props.model.shouldShowScope(scope) && (
+								<ScopeViewer
+									key={scope.name}
+									model={this.props.model}
+									scope={scope}
+								/>
+							)
+					)}
+				</div>
+			</div>
+		);
+	}
+}
+
+@observer
 export class ScopeViewer extends React.Component<{
 	scope: typeof scopeType['_A'];
 	model: Model;
@@ -86,6 +433,7 @@ export class ScopeViewer extends React.Component<{
 	}
 }
 
+@observer
 export class PackageViewer extends React.Component<{
 	scopeName: string;
 	package: typeof localizedFormatPackageType['_A'];
@@ -128,16 +476,23 @@ export class FormatViewer extends React.Component<{
 	model: Model;
 }> {
 	@observable updating = false;
-	@observable format = this.props.format;
+	@observable editedFormat: string | null | undefined = undefined;
+	get format(): string | null {
+		return this.editedFormat || this.props.format;
+	}
 
 	async updateFormat() {
+		if (this.editedFormat === undefined) {
+			return;
+		}
 		this.updating = true;
 		await this.props.model.updateFormat(
 			this.props.scopeName,
 			this.props.lang,
 			this.props.formatId,
-			this.format
+			this.editedFormat
 		);
+		this.editedFormat = undefined;
 		this.updating = false;
 	}
 
@@ -152,7 +507,9 @@ export class FormatViewer extends React.Component<{
 				<div className="format">
 					<InputGroup
 						value={this.format!}
-						onChange={(v: any) => (this.format = v.target.value)}
+						onChange={(v: any) =>
+							(this.editedFormat = v.target.value)
+						}
 						onBlur={() => this.updateFormat()}
 						onKeyDown={evt => {
 							if (evt.keyCode === 13) {

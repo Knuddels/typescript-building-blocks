@@ -16,16 +16,16 @@ export function groupBy<T, TKey>(
 }
 
 export function toObject<T, TKey extends string>(
-	item: T[],
+	item: ReadonlyArray<T>,
 	keySelector: (item: T) => TKey
 ): Record<TKey, T>;
 export function toObject<T, TKey extends string, TValue>(
-	item: T[],
+	item: ReadonlyArray<T>,
 	keySelector: (item: T) => TKey,
 	valueSelector: (item: T) => TValue
 ): Record<TKey, TValue>;
 export function toObject<T, K, V>(
-	item: T[],
+	item: ReadonlyArray<T>,
 	keySelector: (item: T) => K,
 	valueSelector?: (item: T) => V
 ): any {
@@ -34,4 +34,13 @@ export function toObject<T, K, V>(
 		o[keySelector(i)] = valueSelector ? valueSelector(i) : i;
 	}
 	return o;
+}
+
+export function flatMap<T, TResult>(
+	arr: T[],
+	selector: (item: T, idx: number) => TResult[]
+): TResult[] {
+	return new Array<TResult>().concat(
+		...arr.map((item, idx) => selector(item, idx))
+	);
 }

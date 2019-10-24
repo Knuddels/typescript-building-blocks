@@ -1,6 +1,5 @@
 import { Command, command, param } from 'clime';
-import { API, Diagnostic, UpdateAction } from '../model/API';
-import { groupBy } from '../utils/other';
+import { API, DiagnosticFixProvider } from '../model';
 
 @command({ description: 'Updates all formats' })
 export default class extends Command {
@@ -8,28 +7,27 @@ export default class extends Command {
 		@param({ description: 'Project root path', required: true })
 		projectRootPath: string
 	) {
-		const api = new API();
-		const diags = api.getDiagnostics(projectRootPath);
-		api.fixDiagnostics(diags, action => {
-			console.log(actionToString(action));
-		});
+		const api = new API({ projectRootPath });
+		const diags = api.diagnosticProvider.diagnostics;
+		const fixer = new DiagnosticFixProvider();
+
+		const fixes = diags
+			.map(d => ({ diag: d, fix: fixer.getFixes(d)[0] }))
+			.filter(f => f.fix);
+
+		fixer.applyActions(fixes.map(f => f.fix));
 	}
 }
-
-function actionToString(action: UpdateAction): string {
-	const prefix = `${action.package.scope.name}.${action.package.lang}: `;
+/*
+function actionToString(action: DiagnosticFix): string {
+	const pkg = action.format.package;
+	const prefix = `${pkg.scope.name}.${pkg.lang}: `;
 	switch (action.kind) {
 		case 'AddDeclaredFormat':
-			return `${prefix}Add declared format id "${
-				action.declaration.id
-			}": "${action.format.format}".`;
+			return `${prefix}Add declared format id "${action.declaration.id}": "${action.format.format}".`;
 		case 'RemoveUnknownFormat':
-			return `${prefix}Remove unused format "${action.format.id}": "${
-				action.format.format
-			}".`;
+			return `${prefix}Remove unused format "${action.format.id}": "${action.format.format}".`;
 		case 'UpdateFormatWithDeclaredDefaultFormat':
-			return `${prefix}Update format "${action.declaration.id}": "${
-				action.oldFormat.format
-			}" with declared default format "${action.newFormat.format}".`;
+			return `${prefix}Update format "${action.declaration.id}": "${action.format.format}" with declared default format "${action.newFormat.format}".`;
 	}
-}
+}*/
