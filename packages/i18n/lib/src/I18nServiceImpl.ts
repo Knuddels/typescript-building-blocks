@@ -20,6 +20,10 @@ export class I18nServiceImpl implements I18nService {
 		return this._currentLocale;
 	}
 
+	private readonly numberCtorCache = memoizeFormatConstructor(
+		Intl.NumberFormat
+	);
+
 	private readonly dateTimeCtorCache = memoizeFormatConstructor(
 		Intl.DateTimeFormat
 	);
@@ -58,6 +62,14 @@ export class I18nServiceImpl implements I18nService {
 			formatId
 		);
 		return messageFormat.format(data);
+	}
+
+	public formatNumber(
+		value: number,
+		options?: Intl.NumberFormatOptions
+	): string {
+		const f = this.numberCtorCache(this.currentLocale.localeCode, options);
+		return f.format(value);
 	}
 
 	public formatDateTime(

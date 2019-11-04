@@ -33,6 +33,8 @@ export interface I18nService {
 
 	format(formatId: FormatId, data?: {}): string;
 
+	formatNumber(value: number, options?: Intl.NumberFormatOptions): string;
+
 	formatDateTime(
 		dateTime: DateSource,
 		options?: DateTimeFormatOptions
