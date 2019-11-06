@@ -8,6 +8,7 @@ import {
 } from './FormatterProvider';
 import { LocaleId } from '@knuddels/std';
 import { FormattedData } from '.';
+import { LocalePreference } from './LocalePreference';
 
 /**
  * A formatter provider based on `intl-messageformat`.
@@ -16,9 +17,12 @@ export class MessageFormatFormatterProvider implements FormatterProvider {
 	private readonly providers = new ObservableSet<FormatBundleProvider>();
 
 	public getLocalizedFormatterProvider(
-		localeId: LocaleId
+		localePreference: LocalePreference
 	): LocalizedFormatterProvider {
-		return new LocalizedMessageFormatProviderImpl(localeId, this.providers);
+		return new LocalizedMessageFormatProviderImpl(
+			localePreference,
+			this.providers
+		);
 	}
 
 	@action
@@ -35,7 +39,7 @@ export type Formats = Record<string, string | null>;
 
 class LocalizedMessageFormatProviderImpl implements LocalizedFormatterProvider {
 	constructor(
-		public readonly localeId: LocaleId,
+		public readonly localePreference: LocalePreference,
 		private readonly providers: Set<FormatBundleProvider>
 	) {
 		autorun(() => {
@@ -47,15 +51,34 @@ class LocalizedMessageFormatProviderImpl implements LocalizedFormatterProvider {
 	@computed
 	private get formats(): Record<string, Formatter> {
 		const result: Record<string, Formatter> = {};
-		for (const p of this.providers) {
-			const bundle = p(this.localeId);
+		for (const provider of this.providers) {
+			let bundle: FormatBundle | undefined = undefined;
+			for (const locale of this.localePreference.preferredLocales) {
+				// TODO combine multiple locale bundles
+				try {
+					bundle = provider(locale);
+					break;
+				} catch (e) {
+					console.warn(
+						`Could not load locale "${locale}" for bundle "${provider.toString()}". Fallback.`
+					);
+				}
+			}
+
+			if (!bundle) {
+				console.error(
+					`Could not load any locale for "${provider.toString()}"`
+				);
+				continue;
+			}
+
 			for (const [key, value] of Object.entries(bundle.formats)) {
 				if (!value) {
 					console.warn(`Key '${key}' has no translation!`);
 				}
 				result[key] = new MessageFormatFormatter(
 					value || key,
-					this.localeId
+					this.localePreference.preferredLocales
 				);
 			}
 		}
@@ -70,19 +93,22 @@ class LocalizedMessageFormatProviderImpl implements LocalizedFormatterProvider {
 		if (formatId.defaultFormat) {
 			const defaultFormat = new MessageFormatFormatter(
 				formatId.defaultFormat,
-				this.localeId
+				this.localePreference.preferredLocales
 			);
 			this.formats[formatId.id] = defaultFormat;
 			return defaultFormat;
 		}
-		return new MessageFormatFormatter(formatId.id, this.localeId);
+		return new MessageFormatFormatter(
+			formatId.id,
+			this.localePreference.preferredLocales
+		);
 	}
 }
 
 class MessageFormatFormatter implements Formatter {
 	private readonly fmt: MessageFormat;
-	constructor(format: string, locale: LocaleId) {
-		this.fmt = new MessageFormat(format, locale.localeCode);
+	constructor(format: string, locales: ReadonlyArray<LocaleId>) {
+		this.fmt = new MessageFormat(format, locales.map(l => l.localeCode));
 	}
 
 	format(data?: {}): string {

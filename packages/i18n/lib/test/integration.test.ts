@@ -31,7 +31,7 @@ describe('integration', () => {
 			defaultFormat: 'Hello world',
 		});
 
-		const i18n = new I18nServiceImpl(LocaleId.enUS, p);
+		const i18n = new I18nServiceImpl(LocaleId.enUS, LocaleId.enUS, p);
 		expect(i18n.format(format, { total: 100000 })).to.equal(
 			'Hello world, 100,000'
 		);

@@ -8,6 +8,7 @@ import { memoizeFormatConstructor } from './memoizeFormatConstructor';
 import { BugIndicatingError, LocaleId } from '@knuddels/std';
 import { I18nService, DateSource, DateTimeFormatOptions } from './I18nService';
 import { FormattedData } from './FormattedData';
+import { LocalePreference } from './LocalePreference';
 
 export class I18nServiceImpl implements I18nService {
 	@observable
@@ -18,6 +19,11 @@ export class I18nServiceImpl implements I18nService {
 	 */
 	public get currentLocale(): LocaleId {
 		return this._currentLocale;
+	}
+
+	@computed
+	public get currentLocalePreference(): LocalePreference {
+		return new LocalePreference(this.currentLocale, this.fallbackLocale);
 	}
 
 	private readonly numberCtorCache = memoizeFormatConstructor(
@@ -34,6 +40,7 @@ export class I18nServiceImpl implements I18nService {
 
 	constructor(
 		initialLocale: LocaleId,
+		private readonly fallbackLocale: LocaleId,
 		private readonly messageFormatProvider: FormatterProvider
 	) {
 		this._currentLocale = initialLocale;
@@ -46,7 +53,7 @@ export class I18nServiceImpl implements I18nService {
 
 	@computed get localizedFormatProvider(): LocalizedFormatterProvider {
 		return this.messageFormatProvider.getLocalizedFormatterProvider(
-			this._currentLocale
+			this.currentLocalePreference
 		);
 	}
 

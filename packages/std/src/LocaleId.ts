@@ -42,6 +42,14 @@ export class LocaleId {
 		}
 	}
 
+	public get isCountryInvariant(): boolean {
+		return this.country === undefined;
+	}
+
+	public getCountryInvariantLocale(): LocaleId {
+		return new LocaleId(this.language);
+	}
+
 	public get localeCode(): string {
 		if (this.country) {
 			return `${this.language}-${this.country.toUpperCase()}`;

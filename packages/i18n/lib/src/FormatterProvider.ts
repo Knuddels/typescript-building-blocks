@@ -1,15 +1,16 @@
 import { FormatId } from './FormatId';
 import { LocaleId } from '@knuddels/std';
 import { FormattedData } from './FormattedData';
+import { LocalePreference } from './LocalePreference';
 
 export interface FormatterProvider {
 	getLocalizedFormatterProvider(
-		localeId: LocaleId
+		localePreference: LocalePreference
 	): LocalizedFormatterProvider;
 }
 
 export interface LocalizedFormatterProvider {
-	readonly localeId: LocaleId;
+	readonly localePreference: LocalePreference;
 	getFormatter(formatId: FormatId): Formatter;
 }
 
