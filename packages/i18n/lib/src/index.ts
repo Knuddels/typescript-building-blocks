@@ -5,3 +5,4 @@ export * from './FormatterProvider';
 export * from './MessageFormatFormatterProvider';
 export * from './FormattedData';
 export { LocaleId } from '@knuddels/std';
+export { LocalePreference } from './LocalePreference';
