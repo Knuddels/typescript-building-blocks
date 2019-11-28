@@ -1,5 +1,5 @@
 import { FormatId } from './FormatId';
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, autorun } from 'mobx';
 import {
 	LocalizedFormatterProvider,
 	FormatterProvider,
@@ -44,6 +44,9 @@ export class I18nServiceImpl implements I18nService {
 		private readonly messageFormatProvider: FormatterProvider
 	) {
 		this._currentLocale = initialLocale;
+		autorun(() => {
+			this.localizedFormatProvider;
+		});
 	}
 
 	@action
