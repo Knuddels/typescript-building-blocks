@@ -112,13 +112,17 @@ export class MobxConsoleLogger {
 
 	private handleMobxEvent(event: MobxSpyEvent): void {
 		if ('spyReportStart' in event) {
-			if (event.type === 'add' || event.type === 'update') {
+			if (
+				event.type === 'add' ||
+				event.type === 'update' ||
+				event.type === 'delete'
+			) {
 				this.startGroup([
 					formatKind(event.type === 'add' ? 'init' : 'update'),
 					normalText(
 						`${formatOwningObj(event.object)}.${event.key} -> `
 					),
-					...(event.type === 'update'
+					...(event.type !== 'add'
 						? [
 								styled(formatValue(event.oldValue, 70), {
 									color: 'red',
@@ -127,15 +131,21 @@ export class MobxConsoleLogger {
 								normalText(` `),
 						  ]
 						: []),
-					styled(formatValue(event.newValue, 60), {
-						color: event.type === 'add' ? 'blue' : 'green',
-					}),
+					...(event.type !== 'delete'
+						? [
+								styled(formatValue(event.newValue, 60), {
+									color:
+										event.type === 'add' ? 'blue' : 'green',
+								}),
+						  ]
+						: []),
 					normalText(' '),
 					formatName(event.name),
 					{
 						data: {
 							object: event.object,
-							newValue: this.mobx.toJS(event.newValue),
+							newValue: this.mobx.toJS((event as any).newValue),
+							oldValue: this.mobx.toJS((event as any).oldValue),
 						},
 					},
 				]);
@@ -154,6 +164,13 @@ export class MobxConsoleLogger {
 				]);
 			} else {
 				const _nvr: never = event;
+
+				this.startGroup([
+					formatKind((event as any).type),
+					styled(formatValue(formatOwningObj, 100), {
+						color: 'BlueViolet',
+					}),
+				]);
 			}
 		} else if ('spyReportEnd' in event) {
 			this.endGroup();
@@ -170,6 +187,7 @@ export class MobxConsoleLogger {
 			]);
 		} else {
 			const _nvr: never = event;
+			debugger;
 		}
 	}
 }

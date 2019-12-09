@@ -1,6 +1,7 @@
 export type MobxSpyEvent =
 	| MobxSpyEventAdd
 	| MobxSpyEventUpdate
+	| MobxSpyEventDelete
 	| MobxSpyEventCompute
 	| MobxSpyEventReaction
 	| MobxSpyEventScheduledReaction
@@ -11,19 +12,25 @@ export interface MobxSpyEventStart {
 	spyReportStart: true;
 }
 
-export interface MobxSpyEventAddOrUpdate extends MobxSpyEventStart {
+export interface MobxSpyEventAddOrUpdateOrDelete extends MobxSpyEventStart {
 	name: string;
 	object: unknown;
 	key: string;
+}
+
+export interface MobxSpyEventAdd extends MobxSpyEventAddOrUpdateOrDelete {
+	type: 'add';
 	newValue: unknown;
 }
 
-export interface MobxSpyEventAdd extends MobxSpyEventAddOrUpdate {
-	type: 'add';
+export interface MobxSpyEventUpdate extends MobxSpyEventAddOrUpdateOrDelete {
+	type: 'update';
+	newValue: unknown;
+	oldValue: unknown;
 }
 
-export interface MobxSpyEventUpdate extends MobxSpyEventAddOrUpdate {
-	type: 'update';
+export interface MobxSpyEventDelete extends MobxSpyEventAddOrUpdateOrDelete {
+	type: 'delete';
 	oldValue: unknown;
 }
 
