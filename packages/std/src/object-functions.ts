@@ -20,7 +20,7 @@ export function select(data: unknown, propertyPath: string[]): unknown {
 	}
 	const firstProperty = propertyPath[0];
 	const restPath = propertyPath.slice(1);
-	if (typeof data !== 'object' && typeof data !== 'function') {
+	if (typeof data !== 'object' && typeof data !== 'function' || !data) {
 		throw new BugIndicatingError('Invalid path');
 	}
 
