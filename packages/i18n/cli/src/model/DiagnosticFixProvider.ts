@@ -12,15 +12,15 @@ export class DiagnosticFixProvider {
 	public getFixes(diagnostic: Diagnostic): Action[] {
 		if (diagnostic.kind === 'diffingDefaultFormats') {
 			return [
-				new UpdatePackageFormatAction(
-					diagnostic.format,
-					diagnostic.declaration.defaultFormat!,
-					'Update format in default language'
-				),
 				new SetDeclarationDefaultFormatAction(
 					diagnostic.declaration,
 					diagnostic.format.format!,
 					'Update default format in code'
+				),
+				new UpdatePackageFormatAction(
+					diagnostic.format,
+					diagnostic.declaration.defaultFormat!,
+					'Update format in default language'
 				),
 			];
 		} else if (diagnostic.kind === 'missingDefaultFormat') {
