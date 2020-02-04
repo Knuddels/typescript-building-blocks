@@ -16,7 +16,7 @@ export class Scopes {
 	}
 
 	getScopes(): Scope[] {
-		const matches = fg.sync('./**/formats-scope.json', {
+		const matches = fg.sync<string>('./**/formats-scope.json', {
 			cwd: this.dir,
 			ignore: ['**/node_modules/**'],
 		});
@@ -66,7 +66,7 @@ export class Scope {
 	@computed
 	public get localizedFormatPackages(): LocalizedFormatPackage[] {
 		const dir = dirname(this.filePath);
-		const matches = fg.sync('formats.*.json', {
+		const matches = fg.sync<string>('formats.*.json', {
 			cwd: dir,
 		});
 
