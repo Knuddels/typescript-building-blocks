@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"allowSyntheticDefaultImports": true,
+		"target": "ESNext",
+		"jsx": "react",
+		"lib": ["dom", "esnext"],
+		"moduleResolution": "node",
+		"strict": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"experimentalDecorators": true,
+		"declarationMap": true,
+		"sourceMap": true
+	},
+	"include": ["./src/**/*"]
+}

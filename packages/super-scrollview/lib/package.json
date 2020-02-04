@@ -1,0 +1,45 @@
+{
+	"name": "@knuddels/super-scrollview",
+	"version": "0.1.0",
+	"main": "dist/index",
+	"types": "dist/index.d.ts",
+	"author": {
+		"name": "Henning Dieterichs",
+		"email": "h.dieterichs@knuddels.de"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Knuddels/typescript-building-blocks.git"
+	},
+	"homepage": "https://github.com/Knuddels/typescript-building-blocks",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@types/react-native": "^0.60.25",
+		"@knuddels/std": "*"
+	},
+	"peerDependencies": {
+		"mobx": "^5.11.0",
+		"react": "^16.12.0",
+		"mobx-react": "^6.1.0"
+	},
+	"devDependencies": {
+		"@babel/core": "~7.7.7",
+		"@types/react": "~16.9.17",
+		"@types/react-native": "~0.60.23",
+		"jest-expo": "~36.0.0",
+		"jetifier": "~1.6.4",
+		"typescript": "~3.6.3"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"files": [
+		"dist",
+		"src"
+	]
+}

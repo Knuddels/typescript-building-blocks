@@ -3,7 +3,8 @@
 	"references": [
 		{ "path": "./packages/std/tsconfig.json" },
 		{ "path": "./packages/i18n/lib/tsconfig.json" },
-		{ "path": "./packages/mobx-logger/tsconfig.json" }
+		{ "path": "./packages/mobx-logger/tsconfig.json" },
+		{ "path": "./packages/super-scrollview/lib/tsconfig.json" }
 	],
 	"compilerOptions": {
 		"composite": true,
