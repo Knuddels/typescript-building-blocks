@@ -87,13 +87,6 @@ export class SuperScrollView<
 	OffsetScrollViewClass?: Simplify<typeof OffsetScrollView>;
 	autoScrollDown?: boolean;
 }> {
-	public get scrollTarget(): number | undefined {
-		if (!this.scrollViewRef.current) {
-			return undefined;
-		}
-		return this.scrollViewRef.current.scrollTarget;
-	}
-
 	private readonly resizeObserver = new XPResizeObserver();
 
 	@observable private scrollTop: number = 0;
@@ -229,7 +222,7 @@ export class SuperScrollView<
 				this.viewHeight!,
 				this.dummyHeight,
 				newHeight,
-				this.scrollViewRef.current!.scrollTarget
+				0
 			);
 
 			const viewPortTop = newViewInfo.viewPortTop;

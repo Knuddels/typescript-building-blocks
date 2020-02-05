@@ -20,30 +20,30 @@ export class OffsetScrollView extends React.Component<{
 	}) => void;
 	style: XPStyle;
 }> {
-	@observable private currentContentOffset = 0;
+	@observable private currentContentOffsetY = 0;
 	private lastContentOffset: number | undefined = undefined;
 	private readonly scrollViewRef = React.createRef<ScrollView>();
-
-	private scrollTop = 0;
-	private scrollTarget: number | undefined = undefined;
+	private currentScrollTop = 0;
 	private isScrollingActiveTimeout: any = undefined;
 
-	public scrollTo(arg: { y: number; animated: boolean }) {
-		const translatedY = arg.y - this.currentContentOffset;
-		this.scrollViewRef.current!.scrollTo({
-			y: translatedY,
-			animated: arg.animated,
-		});
-
-		this.scrollTop = translatedY;
-		if (!arg.animated && this.props.onScroll) {
-			this.props.onScroll({
-				x: 0,
-				y: arg.y,
-				xVelocity: 0,
-				yVelocity: 0,
-			});
-		}
+	render(): React.ReactNode {
+		return (
+			<ScrollView
+				ref={this.scrollViewRef}
+				style={this.props.style}
+				onScroll={this.handleScroll}
+				onMomentumScrollEnd={this.handleScroll}
+			>
+				<View
+					style={{
+						flex: 1,
+						marginTop: -this.currentContentOffsetY,
+					}}
+				>
+					{this.props.children}
+				</View>
+			</ScrollView>
+		);
 	}
 
 	componentDidMount() {
@@ -71,15 +71,15 @@ export class OffsetScrollView extends React.Component<{
 
 	@action
 	private fixScrollCompensation() {
-		this.currentContentOffset = this.props.contentOffsetY;
+		this.currentContentOffsetY = this.props.contentOffsetY;
 
 		const scrollOffset =
-			this.currentContentOffset - this.lastContentOffset!;
+			this.currentContentOffsetY - this.lastContentOffset!;
 		if (Math.abs(scrollOffset) <= 0.1) {
 			return;
 		}
 
-		const newScrollY = this.scrollTop - scrollOffset;
+		const newScrollY = this.currentScrollTop - scrollOffset;
 
 		setTimeout(() => {
 			this.scrollViewRef.current!.scrollTo({
@@ -88,51 +88,52 @@ export class OffsetScrollView extends React.Component<{
 			});
 		}, 0);
 
-		this.lastContentOffset = this.currentContentOffset;
-		this.scrollTop = newScrollY;
-		this.scrollTarget = newScrollY;
+		this.lastContentOffset = this.currentContentOffsetY;
+		this.currentScrollTop = newScrollY;
 	}
 
 	private readonly handleScroll = (
 		event: NativeSyntheticEvent<NativeScrollEvent>
 	) => {
 		const newTop = event.nativeEvent.contentOffset.y;
-		if (this.scrollTarget && Math.abs(newTop - this.scrollTarget) < 0.5) {
-			this.scrollTop = this.scrollTarget;
-			this.scrollTarget = undefined;
-		} else {
-			this.scrollTop = newTop;
-		}
+		this.handleScrollEx(
+			newTop,
+			event.nativeEvent.velocity!.x,
+			event.nativeEvent.velocity!.y
+		);
+	};
+
+	private handleScrollEx(
+		newScrollTop: number,
+		velocityX: number,
+		velocityY: number
+	) {
+		this.currentScrollTop = newScrollTop;
 
 		if (this.props.onScroll) {
 			this.props.onScroll({
 				x: 0,
-				y: this.scrollTop + this.currentContentOffset,
-				xVelocity: event.nativeEvent.velocity!.x,
-				yVelocity: event.nativeEvent.velocity!.y,
+				y: this.currentScrollTop + this.currentContentOffsetY,
+				xVelocity: velocityX,
+				yVelocity: velocityY,
 			});
 		}
 
 		this.debouncedFixScroll();
-	};
+	}
 
-	render(): React.ReactNode {
-		return (
-			<ScrollView
-				ref={this.scrollViewRef}
-				style={this.props.style}
-				onScroll={this.handleScroll}
-				onMomentumScrollEnd={this.handleScroll}
-			>
-				<View
-					style={{
-						flex: 1,
-						marginTop: -this.currentContentOffset,
-					}}
-				>
-					{this.props.children}
-				</View>
-			</ScrollView>
-		);
+	public scrollTo(arg: { y: number; animated: boolean }) {
+		if (!this.scrollViewRef.current) {
+			return;
+		}
+		const translatedY = arg.y - this.currentContentOffsetY;
+		this.scrollViewRef.current!.scrollTo({
+			y: translatedY,
+			animated: arg.animated,
+		});
+		if (!arg.animated) {
+			this.currentScrollTop = translatedY;
+		}
+		this.handleScrollEx(this.currentScrollTop, 0, 0);
 	}
 }
