@@ -92,7 +92,7 @@ export class SuperScrollView<
 	@observable private scrollTop: number = 0;
 	@observable private viewHeight: number | undefined = undefined;
 
-	private dummyHeight = 0;
+	private dummyHeight = 1000 * 1000;
 
 	private anchor:
 		| { item: ItemInfo<TItem>; top: number; mode: 'top' | 'bottom' }
@@ -116,10 +116,16 @@ export class SuperScrollView<
 		}
 
 		const isInitial = this.viewHeight === undefined;
+		const delta = this.viewHeight! - args.height;
 		this.viewHeight = args.height;
 
 		if (isInitial) {
 			this.setInitialScroll();
+		} else {
+			this.scrollViewRef.current!.scrollTo({
+				y: this.scrollTop + delta,
+				animated: false,
+			});
 		}
 	}
 
@@ -508,7 +514,7 @@ export class SuperScrollView<
 								style={{
 									opacity:
 										item.item.actualHeight === undefined
-											? 1
+											? 0
 											: 1,
 									position: 'absolute',
 									width: '100%',
