@@ -2,7 +2,6 @@ import React from 'react';
 import { runInAction, observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import { XPStyle } from '../XP/XPStyle';
-import { ScrollView } from 'reactxp';
 
 @observer
 export class OffsetScrollView extends React.Component<{

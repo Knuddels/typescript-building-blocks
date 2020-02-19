@@ -5,11 +5,13 @@
 		"ios": "react-native run-ios",
 		"web": "expo start --web",
 		"start": "react-native start",
-		"test": "jest"
+		"test": "jest",
+		"sync": "sync-folders --watch ../lib/ ./node_modules/@knuddels/super-scrollview",
+		"sync2": "sync-folders --watch ../../std/ ./node_modules/@knuddels"
 	},
 	"dependencies": {
 		"@babel/plugin-proposal-decorators": "^7.7.4",
-		"expo": "~36.0.1",
+		"expo": "~36.0.2",
 		"mobx": "^5.15.0",
 		"mobx-react": "^6.1.4",
 		"react": "~16.9.0",
@@ -22,6 +24,7 @@
 		"react-native-web": "~0.11.7"
 	},
 	"devDependencies": {
+		"sync-folders": "^2.0.0",
 		"@babel/core": "~7.7.7",
 		"@types/react": "~16.9.17",
 		"@types/react-native": "~0.60.23",

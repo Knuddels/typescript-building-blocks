@@ -4,5 +4,7 @@
 		"packages\\i18n\\lib\\dist\\test\\*.test.js"
 	],
 	"mochaExplorer.require": "source-map-support/register",
-	"mochaExplorer.logpanel": true
+	"mochaExplorer.logpanel": true,
+	"tasksStatusbar.taskLabelFilter": "dev - packages/(.*)",
+	"tasksStatusbar.nameTemplate": "$1"
 }
