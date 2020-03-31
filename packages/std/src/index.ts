@@ -11,3 +11,4 @@ export * from './result';
 export * from './ResultPromise';
 export * from './maps';
 export * from './LocaleId';
+export * from './SimpleCache';
