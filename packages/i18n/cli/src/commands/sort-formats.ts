@@ -8,7 +8,7 @@ export default class extends Command {
 		projectRootPath: string
 	) {
 		const scopes = new Scopes({ dir: projectRootPath });
-		for (const s of scopes.getScopes()) {
+		for (const s of scopes.scopes) {
 			for (const p of s.localizedFormatPackages) {
 				const f = p.formats;
 				p.setFormats(f);

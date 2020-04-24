@@ -1,14 +1,33 @@
 import { hotClass, registerUpdateReconciler } from '@hediet/node-reload';
 import * as ts from 'typescript';
 import { FormatDeclaration } from '../model/FormatDeclarationProvider';
-import { LocalizedFormatPackage, PackageFormat, Format } from '../model/Scopes';
+import {
+	LocalizedFormatPackage,
+	PackageFormat,
+	Format,
+	Scopes,
+} from '../model/Scopes';
 import { FileEditor } from '../utils/FileEditor';
-import { groupBy, toObject } from '../utils/other';
+import { groupBy, toObject, flatMap } from '../utils/other';
 import { Diagnostic } from './DiagnosticProvider';
+import { computed } from 'mobx';
 
 registerUpdateReconciler(module);
 
 export class DiagnosticFixProvider {
+	@computed
+	get formatsGroupedById(): Map<string, PackageFormat[]> {
+		return groupBy(
+			flatMap(
+				flatMap(this.scopes.scopes, s => s.localizedFormatPackages),
+				p => p.formats
+			),
+			p => p.id
+		);
+	}
+
+	constructor(private readonly scopes: Scopes) {}
+
 	public getFixes(diagnostic: Diagnostic): Action[] {
 		if (diagnostic.kind === 'diffingDefaultFormats') {
 			return [
@@ -32,10 +51,23 @@ export class DiagnosticFixProvider {
 				),
 			];
 		} else if (diagnostic.kind === 'missingFormat') {
+			let existingFormat: PackageFormat | undefined = undefined;
+
+			const existingFormatsInOtherScopes = this.formatsGroupedById.get(
+				diagnostic.declaration.id
+			);
+			if (existingFormatsInOtherScopes) {
+				existingFormat = existingFormatsInOtherScopes.find(
+					f => f.package.lang === diagnostic.package.lang
+				);
+			}
+
 			const newFormat =
-				diagnostic.package.scope.defaultLang ===
-					diagnostic.package.lang &&
-				diagnostic.declaration.defaultFormat
+				existingFormat && existingFormat.format
+					? existingFormat.format
+					: diagnostic.package.scope.defaultLang ===
+							diagnostic.package.lang &&
+					  diagnostic.declaration.defaultFormat
 					? diagnostic.declaration.defaultFormat
 					: null;
 			return [
@@ -45,7 +77,9 @@ export class DiagnosticFixProvider {
 						format: newFormat,
 					},
 					diagnostic.package,
-					'Add format'
+					existingFormat && existingFormat.format
+						? `Add format from ${existingFormat.package.scope.name}`
+						: 'Add format'
 				),
 			];
 		} else if (diagnostic.kind === 'unknownFormat') {

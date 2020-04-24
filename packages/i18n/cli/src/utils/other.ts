@@ -38,7 +38,7 @@ export function toObject<T, K, V>(
 
 export function flatMap<T, TResult>(
 	arr: T[],
-	selector: (item: T, idx: number) => TResult[]
+	selector: (item: T, idx: number) => readonly TResult[]
 ): TResult[] {
 	return new Array<TResult>().concat(
 		...arr.map((item, idx) => selector(item, idx))

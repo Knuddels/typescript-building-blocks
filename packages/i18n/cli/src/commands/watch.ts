@@ -28,9 +28,10 @@ export default class extends Command {
 		projectRootPath: string
 	) {
 		const { distDir } = await build();
+
 		const api = new API({ projectRootPath, watch: true });
 
-		const diagnosticFixProvider = new DiagnosticFixProvider();
+		const diagnosticFixProvider = new DiagnosticFixProvider(api.scopes);
 		function getFixesWithIdForDiagnostic(
 			d: Diagnostic,
 			diagnosticIdx: number
@@ -167,7 +168,7 @@ export default class extends Command {
 		});
 
 		autorun(() => {
-			const scopesData = api.scopes.getScopes().map(s => {
+			const scopesData = api.scopes.scopes.map(s => {
 				const packages = s.localizedFormatPackages;
 				const data: typeof scopeType['_A'] = {
 					defaultLang: s.defaultLang,

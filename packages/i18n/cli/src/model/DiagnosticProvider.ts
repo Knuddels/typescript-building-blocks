@@ -80,10 +80,16 @@ export class DiagnosticProvider {
 			}
 		}
 
-		for (const scope of scopes.getScopes()) {
-			const declsInScope = formatDeclarations.filter(d =>
-				scope.containsSourceFile(d.fileName)
-			);
+		const declsByScope = groupBy(formatDeclarations, d =>
+			scopes.findScopeForSourceFile(d.fileName)
+		);
+
+		for (const [scope, declsInScope] of declsByScope.entries()) {
+			if (!scope) {
+				// TODO log error, declaration has no scope.
+				continue;
+			}
+
 			for (const d of declsInScope) {
 				processedDecls.add(d);
 			}

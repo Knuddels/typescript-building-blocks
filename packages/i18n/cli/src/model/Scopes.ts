@@ -3,31 +3,76 @@ import * as micromatch from 'micromatch';
 import * as fg from 'fast-glob';
 import { join, dirname, resolve } from 'path';
 import * as chokidar from 'chokidar';
-import { computed, observable, autorun, action } from 'mobx';
+import { computed, observable, autorun, action, ObservableMap } from 'mobx';
 import { Disposable } from '@hediet/std/disposable';
 
 export class Scopes {
 	public readonly dir: string;
 	public readonly watch: boolean;
 
+	private readonly _scopes = new ObservableMap<string, Scope>();
+
 	constructor(options: { dir: string; watch?: boolean }) {
 		this.dir = options.dir;
 		this.watch = !!options.watch;
+
+		if (this.watch) {
+			const w = chokidar.watch('./**/formats-scope.json', {
+				cwd: this.dir,
+				ignored: ['**/node_modules/**'],
+			});
+
+			w.on('add', path => {
+				this._scopes.set(
+					path,
+					new Scope(join(this.dir, path), this.watch)
+				);
+			});
+			w.on('change', path => {
+				const scope = this._scopes.get(path);
+				if (!scope) {
+					return;
+				}
+				scope.reload();
+			});
+			w.on('unlink', path => {
+				this._scopes.delete(path);
+			});
+		} else {
+			const matches = fg.sync('./**/formats-scope.json', {
+				cwd: this.dir,
+				ignore: ['**/node_modules/**'],
+			});
+			for (const m of matches) {
+				this._scopes.set(m, new Scope(join(this.dir, m), this.watch));
+			}
+		}
 	}
 
-	getScopes(): Scope[] {
-		const matches = fg.sync('./**/formats-scope.json', {
-			cwd: this.dir,
-			ignore: ['**/node_modules/**'],
-		});
+	/**
+	 * Prefers scope with heigher priority if the file matches multiple scopes.
+	 */
+	findScopeForSourceFile(fileName: string): Scope | undefined {
+		for (const s of this.scopes) {
+			if (s.containsSourceFile(fileName)) {
+				return s;
+			}
+		}
+		return undefined;
+	}
 
-		return matches.map(m => {
-			return new Scope(join(this.dir, m), this.watch);
-		});
+	/**
+	 * The scopes sorted by their scope priority.
+	 */
+	@computed
+	get scopes(): Scope[] {
+		return [...this._scopes.values()].sort(
+			(a, b) => b.scopePriority - a.scopePriority
+		);
 	}
 
 	getScope(name: string): Scope | undefined {
-		return this.getScopes().find(s => s.name === name);
+		return this.scopes.find(s => s.name === name);
 	}
 }
 
@@ -35,11 +80,12 @@ interface ScopeDoc {
 	scopeName: string;
 	files: string[];
 	defaultLang: string;
+	scopePriority: number | undefined;
 }
 
 export class Scope {
 	@observable
-	private docContent: string;
+	private docContent!: string;
 
 	@computed
 	private get doc(): ScopeDoc {
@@ -53,14 +99,23 @@ export class Scope {
 		return this.doc.scopeName;
 	}
 
+	public get scopePriority(): number {
+		return this.doc.scopePriority || 0;
+	}
+
 	constructor(
 		public readonly filePath: string,
 		private readonly watch: boolean
 	) {
-		this.docContent = readFileSync(this.filePath, { encoding: 'utf8' });
+		this.reload();
+
 		autorun(() => {
 			this.localizedFormatPackages;
 		});
+	}
+
+	public reload(): void {
+		this.docContent = readFileSync(this.filePath, { encoding: 'utf8' });
 	}
 
 	@computed
@@ -86,7 +141,7 @@ export class Scope {
 		const absolutePatterns = this.doc.files.map(f =>
 			resolve(dirname(this.filePath), f).replace(/\\/g, '/')
 		);
-		return micromatch.every(fileName.replace(/\\/g, '/'), absolutePatterns);
+		return micromatch.any(fileName.replace(/\\/g, '/'), absolutePatterns);
 	}
 }
 

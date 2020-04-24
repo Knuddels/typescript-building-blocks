@@ -9,7 +9,7 @@ export default class extends Command {
 	) {
 		const api = new API({ projectRootPath });
 		const diags = api.diagnosticProvider.diagnostics;
-		const fixer = new DiagnosticFixProvider();
+		const fixer = new DiagnosticFixProvider(api.scopes);
 
 		const fixes = diags
 			.map(d => ({ diag: d, fix: fixer.getFixes(d)[0] }))
