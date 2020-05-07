@@ -29,7 +29,7 @@ I have {numCats, number} cats.
 Format Syntax:
 
 ```
-I have {number: numCats} cats.
+I have {number | numCats} cats.
 ```
 
 ### Number: Percent
@@ -43,7 +43,7 @@ Almost {pctBlack, number, percent} of them are black.
 Format Syntax:
 
 ```
-Almost {number: pctBlack, { "style": "percent" }} of them are black.
+Almost {number | pctBlack, { style: "percent" }} of them are black.
 ```
 
 ## select Format
@@ -61,10 +61,10 @@ Message Syntax:
 Format Syntax:
 
 ```
-{mapString: gender, {
-    "male": <He>,
-    "female": <She>,
-    "other": <They>
+{mapString | gender, {
+    male: <He>,
+    female: <She>,
+    other: <They>
 }} will respond shortly.
 ```
 
@@ -83,9 +83,9 @@ Message Syntax:
 Format Syntax:
 
 ```
-{mapString: taxableArea, {
-    "yes": <An additional {number: taxRate, { "style": "percent" }} tax will be collected.>,
-    "other": <No taxes apply.>
+{mapString | taxableArea, {
+    yes: <An additional {number | taxRate, { style: "percent" }} tax will be collected.>,
+    other: <No taxes apply.>
 }}
 ```
 
@@ -94,37 +94,43 @@ Format Syntax:
 Format Syntax:
 
 ```
-Click {linkHere: <here>} to get your {bold: <item>}.
+Click {linkHere | <here>} to get your {bold | <item>}.
 ```
 
 # Grammar
 
 ```
-sym S ::= StructuredText.
-sym StructuredText ::= (StructuredTextText | StructuredTextValue)*.
-sym StructuredTextText ::= (char | "{{" | "}}" | ">>" | "<<")*.
-sym StructuredTextValue ::= "{" Value "}".
+sym S ::= StructuredText
+sym StructuredText ::= (StructuredTextText | StructuredTextValue)*
+sym StructuredTextText ::= (char | "{{" | "}}" | ">>" | "<<")*
+sym StructuredTextValue ::= ParenthesizedValue
 
-sym Value ::= Json | NestedStructuredText | FunctionInvocation.
-sym NestedStructuredText ::= "<" StructuredText ">".
-sym FunctionInvocation ::= Identifier ":" FunctionInvocationArgs.
+sym Value ::= Json | NestedStructuredText | FunctionInvocation | ParenthesizedValue
+sym NestedStructuredText ::= "<" StructuredText ">"
+sym FunctionInvocation ::= Identifier "|" FunctionInvocationArgs
+// Trailing comma is allowed. Must be embedded in {} if direct child of an array or object.
 sym FunctionInvocationArgs ::= ((Value ",")* Value ","?)?
+sym ParenthesizedValue ::= "{" Value "}"
 
+sym Identifier ::= IdentifierStart IdentifierCont*
+sym IdentifierStart ::= 'a' .. 'z' | 'A' .. 'Z' | '_' | '$'
+sym IdentifierCont ::= IdentifierStart | '0' .. '9'
 
 sym Json ::= Object | Array | string | number | "true" | "false" | "null"
 
 sym Object ::= '{' ObjectMembers '}'
 sym ObjectMembers ::= ((ObjectMember ",")* ObjectMember ","?)?
-sym ObjectMember ::= String ':' Json
+sym ObjectMember ::= (string | Identifier) ':' Value
 
-sym array ::= '[' elements ']'
-sym elements ::= ((Json ",")* Json ","?)?
+sym Array ::= '[' elements ']'
+// Trailing comma is allowed.
+sym elements ::= ((Value ",")* Value ","?)?
 
 sym string ::= '"' characters '"'
 sym characters ::=  "" | character characters
 sym character ::= '0020' . '10ffff' - '"' - '\' | '\' escape
 sym escape ::= '"' | '\' | '/' | 'b' | 'f' | 'n' | 'r' | 't' | 'u' hex hex hex hex
-sym hex ::= digit | 'A' . 'F' | 'a' . 'f'
+sym hex ::= digit | 'A' .. 'F' | 'a' .. 'f'
 
 sym number ::= integer fraction exponent
 sym integer ::= digit | onenine digits | '-' digit | '-' onenine digits
