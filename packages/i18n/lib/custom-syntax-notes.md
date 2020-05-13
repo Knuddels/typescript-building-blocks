@@ -29,7 +29,7 @@ I have {numCats, number} cats.
 Format Syntax:
 
 ```
-I have {number | numCats} cats.
+I have {fmtNum {numCats}} cats.
 ```
 
 ### Number: Percent
@@ -43,7 +43,7 @@ Almost {pctBlack, number, percent} of them are black.
 Format Syntax:
 
 ```
-Almost {number | pctBlack, { style: "percent" }} of them are black.
+Almost {fmtNum {pctBlack} style: percent} of them are black.
 ```
 
 ## select Format
@@ -61,9 +61,9 @@ Message Syntax:
 Format Syntax:
 
 ```
-{mapString | gender, {
-    male: <He>,
-    female: <She>,
+{mapString {gender} {
+    male: <He>
+    female: <She>
     other: <They>
 }} will respond shortly.
 ```
@@ -83,8 +83,8 @@ Message Syntax:
 Format Syntax:
 
 ```
-{mapString | taxableArea, {
-    yes: <An additional {number | taxRate, { style: "percent" }} tax will be collected.>,
+{mapStr {taxableArea} {
+    yes: <An additional {fmtNum {taxRate} style: percent} tax will be collected.>
     other: <No taxes apply.>
 }}
 ```
@@ -94,10 +94,20 @@ Format Syntax:
 Format Syntax:
 
 ```
-Click {linkHere | <here>} to get your {bold | <item>}.
+Click {linkHere <here>} to get your {bold {italic <item>}}.
+```
+
+## Escaping
+
+Format Syntax:
+
+```
+This is a {bold <ident<string, this is bold and \ident\:{italic <italic>}>ident>}.
 ```
 
 # Grammar
+
+(not up to date)
 
 ```
 sym S ::= StructuredText
