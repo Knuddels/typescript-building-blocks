@@ -105,52 +105,6 @@ Format Syntax:
 This is a {bold <ident<string, this is bold and \ident\:{italic <italic>}>ident>}.
 ```
 
-# Grammar
+## Grammar
 
-(not up to date)
-
-```
-sym S ::= StructuredText
-sym StructuredText ::= (StructuredTextText | StructuredTextValue)*
-sym StructuredTextText ::= (char | "{{" | "}}" | ">>" | "<<")*
-sym StructuredTextValue ::= ParenthesizedValue
-
-sym Value ::= Json | NestedStructuredText | FunctionInvocation | ParenthesizedValue
-sym NestedStructuredText ::= "<" StructuredText ">"
-sym FunctionInvocation ::= Identifier "|" FunctionInvocationArgs
-// Trailing comma is allowed. Must be embedded in {} if direct child of an array or object.
-sym FunctionInvocationArgs ::= ((Value ",")* Value ","?)?
-sym ParenthesizedValue ::= "{" Value "}"
-
-sym Identifier ::= IdentifierStart IdentifierCont*
-sym IdentifierStart ::= 'a' .. 'z' | 'A' .. 'Z' | '_' | '$'
-sym IdentifierCont ::= IdentifierStart | '0' .. '9'
-
-sym Json ::= Object | Array | string | number | "true" | "false" | "null"
-
-sym Object ::= '{' ObjectMembers '}'
-sym ObjectMembers ::= ((ObjectMember ",")* ObjectMember ","?)?
-sym ObjectMember ::= (string | Identifier) ':' Value
-
-sym Array ::= '[' elements ']'
-// Trailing comma is allowed.
-sym elements ::= ((Value ",")* Value ","?)?
-
-sym string ::= '"' characters '"'
-sym characters ::=  "" | character characters
-sym character ::= '0020' . '10ffff' - '"' - '\' | '\' escape
-sym escape ::= '"' | '\' | '/' | 'b' | 'f' | 'n' | 'r' | 't' | 'u' hex hex hex hex
-sym hex ::= digit | 'A' .. 'F' | 'a' .. 'f'
-
-sym number ::= integer fraction exponent
-sym integer ::= digit | onenine digits | '-' digit | '-' onenine digits
-sym digits ::= digit | digit digits
-sym digit ::= '0' | onenine
-sym onenine ::= '1' .. '9'
-sym fraction ::= "" | '.' digits
-sym exponent ::= "" | 'E' sign digits | 'e' sign digits
-sym sign ::= "" | '+' | '-'
-
-sym ws ::= "" | '0020' ws | '000D' ws | '000A' ws | '0009' ws
-
-```
+See [here](https://github.com/hediet/geml/blob/36220b0f4db8177845ba3b231c599759b321f670/README.md), production `MultilineString`.
