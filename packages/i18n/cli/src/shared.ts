@@ -9,7 +9,7 @@ export const port = 44441;
 
 export type FormatDeclarationData = {
 	formatId: string;
-	defaultFormat: string | undefined;
+	defaultFormat: string | null;
 };
 
 export type LocalizedFormatPackageId = {
@@ -65,7 +65,8 @@ export type DiagnosticData = { fixes: ActionId[] } & (
 			kind: 'missingDefaultFormat';
 			format: FormatId;
 			declaration: FormatDeclarationData;
-	  });
+	  }
+);
 
 const unchecked = <T>() => types.any as types.Type<T>;
 

@@ -10,7 +10,7 @@ export class FormatDeclaration {
 	constructor(
 		public readonly id: string,
 		public readonly node: ts.Node,
-		public readonly defaultFormat?: string
+		public readonly defaultFormat: string | null
 	) {}
 
 	public get fileName() {
@@ -35,7 +35,7 @@ export class FormatDeclarationProvider {
 	private readonly cache = new SimpleCache<
 		ts.SourceFile,
 		FormatDeclaration[]
-	>(sf => (sf as any).version || sf.fileName);
+	>((sf) => (sf as any).version || sf.fileName);
 
 	@computed
 	public get formatDeclarations(): FormatDeclaration[] {
@@ -44,7 +44,7 @@ export class FormatDeclarationProvider {
 		const result = new Array<FormatDeclaration>();
 		for (const sf of prog.getSourceFiles()) {
 			result.push(
-				...this.cache.getEntry(sf, sf => m.getDeclaredFormats(sf))
+				...this.cache.getEntry(sf, (sf) => m.getDeclaredFormats(sf))
 			);
 		}
 		return result;
@@ -52,6 +52,13 @@ export class FormatDeclarationProvider {
 }
 
 registerUpdateReconciler(module);
+
+function undefinedToNull<T>(val: T | undefined): T | null {
+	if (val === undefined) {
+		return null;
+	}
+	return val;
+}
 
 @hotClass(module)
 class Main {
@@ -69,7 +76,7 @@ class Main {
 		const result = new Array<FormatDeclaration>();
 
 		const visitNode = (node: ts.Node) => {
-			node.forEachChild(c => {
+			node.forEachChild((c) => {
 				visitNode(c);
 			});
 
@@ -115,7 +122,11 @@ class Main {
 			return false;
 		}
 
-		return new FormatDeclaration(id, call, (val as any).defaultFormat);
+		return new FormatDeclaration(
+			id,
+			call,
+			undefinedToNull((val as any).defaultFormat)
+		);
 	}
 
 	private interpretExpression(expr: ts.Expression): unknown {

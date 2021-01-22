@@ -70,7 +70,7 @@ export class DiagnosticProvider {
 			diagnostics.push(diag);
 		}
 
-		const groups = groupBy(formatDeclarations, d => d.id);
+		const groups = groupBy(formatDeclarations, (d) => d.id);
 		for (const values of groups.values()) {
 			if (values.length > 1) {
 				log({
@@ -80,7 +80,7 @@ export class DiagnosticProvider {
 			}
 		}
 
-		const declsByScope = groupBy(formatDeclarations, d =>
+		const declsByScope = groupBy(formatDeclarations, (d) =>
 			scopes.findScopeForSourceFile(d.fileName)
 		);
 
@@ -93,12 +93,12 @@ export class DiagnosticProvider {
 			for (const d of declsInScope) {
 				processedDecls.add(d);
 			}
-			const declsInScopeById = toObject(declsInScope, d => d.id);
+			const declsInScopeById = toObject(declsInScope, (d) => d.id);
 
 			for (const pkg of scope.localizedFormatPackages) {
 				const isDefaultPkg = pkg.lang === scope.defaultLang;
 				const formats = pkg.formats;
-				const formatsById = toObject(formats, f => f.id);
+				const formatsById = toObject(formats, (f) => f.id);
 				const diffs = diffObjectsKeys(formatsById, declsInScopeById);
 
 				for (const diff of diffs) {
@@ -120,7 +120,7 @@ export class DiagnosticProvider {
 								format: diff.val1,
 							});
 						} else if (isDefaultPkg) {
-							if (diff.val2.defaultFormat === undefined) {
+							if (diff.val2.defaultFormat === null) {
 								log({
 									kind: 'missingDefaultFormat',
 									format: diff.val1,
